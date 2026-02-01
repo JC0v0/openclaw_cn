@@ -1,86 +1,3 @@
-# 🦞 OpenClaw — 个人 AI 助手
-
-[官网](https://openclaw.ai) · [文档](https://docs.openclaw.ai) · [快速入门](https://docs.openclaw.ai/start/getting-started-zh) · [更新指南](https://docs.openclaw.ai/install/updating) · [常见问题](https://docs.openclaw.ai/start/faq-zh) · [Discord](https://discord.gg/clawd)
-
----
-
-**OpenClaw** 是一个运行在你自己的设备上的 _个人 AI 助手_。
-它可以在你已使用的频道上回答你（WhatsApp、Telegram、Slack、Discord、Google Chat、Signal、iMessage、Microsoft Teams、WebChat），以及扩展频道如 BlueBubbles、Matrix、Zalo 和 Zalo Personal。它可以在 macOS/iOS/Android 上说话和倾听，并渲染一个你可以控制的实时画布。网关只是控制平面——产品才是助手。
-
-如果你想要一个个人的、单用户的助手，感觉本地、快速且始终在线，就是它了。
-
-### 推荐设置
-
-运行入门向导 (`openclaw onboard`)。它会引导你完成网关、工作区、频道和技能的设置。CLI 向导是推荐路径，适用于 **macOS、Linux 和 Windows（通过 WSL2；强烈推荐）**。
-
-支持 npm、pnpm 或 bun。
-
-新安装？从这里开始：[快速入门](https://docs.openclaw.ai/start/getting-started-zh)
-
-### 模型订阅 (OAuth)
-
-- **[Anthropic](https://www.anthropic.com/)** (Claude Pro/Max)
-- **[OpenAI](https://openai.com/)** (ChatGPT/Codex)
-
-### 安装（推荐）
-
-运行时：**Node ≥22**
-
-```bash
-npm install -g openclaw@latest
-# 或: pnpm add -g openclaw@latest
-
-openclaw onboard --install-daemon
-```
-
-向导会安装网关守护进程（launchd/systemd 用户服务）使其保持运行。
-
-### 快速开始
-
-```bash
-openclaw onboard --install-daemon
-
-openclaw gateway --port 18789 --verbose
-
-# 发送消息
-openclaw message send --to +1234567890 --message "你好，来自 OpenClaw"
-
-# 与助手对话（可选择发送回任何已连接的频道）
-openclaw agent --message "发布检查清单" --thinking high
-```
-
-### 主要特性
-
-- **[本地优先的网关](https://docs.openclaw.ai/gateway)** — 用于会话、频道、工具和事件的单一控制平面
-- **[多频道收件箱](https://docs.openclaw.ai/channels)** — WhatsApp、Telegram、Slack、Discord、Google Chat、Signal、iMessage、BlueBubbles、Microsoft Teams、Matrix、Zalo、Zalo Personal、WebChat、macOS、iOS/Android
-- **[多代理路由](https://docs.openclaw.ai/gateway/configuration)** — 将入站频道/账户/对等方路由到隔离的代理
-- **[语音唤醒](https://docs.openclaw.ai/nodes/voicewake) + [对话模式](https://docs.openclaw.ai/nodes/talk)** — macOS/iOS/Android 的始终在线语音
-- **[实时画布](https://docs.openclaw.ai/platforms/mac/canvas)** — 代理驱动的可视化工作区
-
-### 从源代码构建（开发）
-
-```bash
-git clone https://github.com/JC0v0/openclaw_cn.git
-cd openclaw_cn
-
-pnpm install
-pnpm ui:build  # 首次运行时自动安装 UI 依赖
-pnpm build
-
-pnpm openclaw onboard --install-daemon
-
-# 开发循环（TS 更改时自动重新加载）
-pnpm gateway:watch
-```
-
-### 社区
-
-参见 [CONTRIBUTING.md](CONTRIBUTING.md) 了解指南、维护者以及如何提交 PR。
-
-感谢所有 clawtributors 的贡献！
-
----
-
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text-dark.png">
@@ -508,6 +425,10 @@ curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/JC0v0/op
 
 - **中文版**: https://github.com/JC0v0/openclaw_cn
 - **原版**: https://github.com/openclaw/openclaw
+
+### 中文社区
+
+加入腾讯频道【OpenClaw中文版】与其他用户交流：https://pd.qq.com/s/46ogez1gd
 
 ### 贡献者
 

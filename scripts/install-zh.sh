@@ -374,6 +374,9 @@ OpenClaw 中文版安装程序 (macOS + Linux)
   curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash
   curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --no-onboard
   curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- --install-method git --no-onboard
+
+中文社区:
+  腾讯频道: https://pd.qq.com/s/46ogez1gd
 EOF
 }
 
@@ -491,6 +494,7 @@ echo "  🦞 OpenClaw 中文版 Installer (JC0v0/openclaw_cn)"
 echo -e "${NC}${ACCENT_DIM}  ${TAGLINE}${NC}"
 echo ""
 echo -e "${INFO}i${NC} 中文版仓库: ${ACCENT}https://github.com/JC0v0/openclaw_cn${NC}"
+echo -e "${INFO}i${NC} 中文社区: ${ACCENT}https://pd.qq.com/s/46ogez1gd${NC}"
 echo ""
 
 # Detect OS
@@ -1418,6 +1422,7 @@ EOF
     fi
 
     echo ""
+    echo -e "中文社区: ${INFO}https://pd.qq.com/s/46ogez1gd${NC}"
     echo -e "FAQ: ${INFO}https://docs.openclaw.ai/start/faq${NC}"
 }
 
