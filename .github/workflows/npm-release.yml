@@ -12,7 +12,7 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
 
 jobs:
@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
           check-latest: true
 
       - name: Setup pnpm
@@ -40,7 +41,7 @@ jobs:
         id: get_version
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event_inputs.version }}"
+            VERSION="${{ github.event.inputs.version }}"
           else
             VERSION="${GITHUB_REF#refs/tags/}"
           fi
@@ -60,17 +61,17 @@ jobs:
           echo "Git tag: ${{ steps.get_version.outputs.version }}"
 
       - name: Publish to npm
-        run: |
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-          npm publish --access public --provenance
+        run: npm publish --access public --provenance
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          name: OpenClaw 中文版 ${{ steps.get_version.outputs.version }}
+          release_name: OpenClaw 中文版 ${{ steps.get_version.outputs.version }}
           body: |
             ## OpenClaw 中文版 ${{ steps.get_version.outputs.version }}
 
@@ -91,5 +92,3 @@ jobs:
             加入腾讯频道【OpenClaw中文版】：https://pd.qq.com/s/46ogez1gd
           draft: false
           prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
