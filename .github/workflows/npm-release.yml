@@ -1,0 +1,94 @@
+name: npm release
+
+on:
+  push:
+    tags:
+      - v[0-9]+.*
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v2026.1.30)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  npm-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: 'https://registry.npmjs.org'
+          check-latest: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.23.0
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Publishing version: ${VERSION}"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Verify package
+        run: |
+          echo "Package name: $(node -p 'require("./package.json").name')"
+          echo "Package version: $(node -p 'require("./package.json").version')"
+          echo "Git tag: ${{ steps.get_version.outputs.version }}"
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: OpenClaw 中文版 ${{ steps.get_version.outputs.version }}
+          body: |
+            ## OpenClaw 中文版 ${{ steps.get_version.outputs.version }}
+
+            ### 安装
+            ```bash
+            npm install -g openclaw-zh
+            ```
+
+            ### 或使用安装脚本
+            ```bash
+            curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/JC0v0/openclaw_cn/main/scripts/install-zh.sh | bash
+            ```
+
+            ### 更新内容
+            详见 [CHANGELOG.md](https://github.com/JC0v0/openclaw_cn/blob/main/CHANGELOG.md)
+
+            ### 中文社区
+            加入腾讯频道【OpenClaw中文版】：https://pd.qq.com/s/46ogez1gd
+          draft: false
+          prerelease: false
