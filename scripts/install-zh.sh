@@ -949,7 +949,7 @@ EOF
 # Install OpenClaw
 resolve_beta_version() {
     local beta=""
-    beta="$(npm view openclaw dist-tags.beta 2>/dev/null || true)"
+    beta="$(npm view openclaw-zh dist-tags.beta 2>/dev/null || true)"
     if [[ -z "$beta" || "$beta" == "undefined" || "$beta" == "null" ]]; then
         return 1
     fi
@@ -957,14 +957,14 @@ resolve_beta_version() {
 }
 
 install_openclaw() {
-    local package_name="openclaw"
+    local package_name="openclaw-zh"
     if [[ "$USE_BETA" == "1" ]]; then
         local beta_version=""
         beta_version="$(resolve_beta_version || true)"
         if [[ -n "$beta_version" ]]; then
             OPENCLAW_VERSION="$beta_version"
             echo -e "${INFO}i${NC} 检测到 Beta 标签 (${beta_version})；正在安装 beta 版。"
-            package_name="openclaw"
+            package_name="openclaw-zh"
         else
             OPENCLAW_VERSION="latest"
             echo -e "${INFO}i${NC} 未找到 Beta 标签；正在安装最新版。"
@@ -995,11 +995,11 @@ install_openclaw() {
         install_openclaw_npm "${install_spec}"
     fi
 
-    if [[ "${OPENCLAW_VERSION}" == "latest" && "${package_name}" == "openclaw" ]]; then
+    if [[ "${OPENCLAW_VERSION}" == "latest" && "${package_name}" == "openclaw-zh" ]]; then
         if ! resolve_openclaw_bin &> /dev/null; then
-            echo -e "${WARN}→${NC} npm install openclaw@latest 失败；正在重试 openclaw@next"
+            echo -e "${WARN}→${NC} npm install openclaw-zh@latest 失败；正在重试 openclaw-zh@next"
             cleanup_npm_openclaw_paths
-            install_openclaw_npm "openclaw@next"
+            install_openclaw_npm "openclaw-zh@next"
         fi
     fi
 
@@ -1212,9 +1212,10 @@ EOF
     local final_git_dir=""
     if [[ "$INSTALL_METHOD" == "git" ]]; then
         # Clean up npm global install if switching to git
-        if npm list -g openclaw &>/dev/null; then
+        if npm list -g openclaw &>/dev/null || npm list -g openclaw-zh &>/dev/null; then
             echo -e "${WARN}→${NC} 正在移除 npm 全局安装 (切换到 git)..."
             npm uninstall -g openclaw 2>/dev/null || true
+            npm uninstall -g openclaw-zh 2>/dev/null || true
             echo -e "${SUCCESS}✓${NC} npm 全局安装已移除"
         fi
 
