@@ -419,7 +419,7 @@ OpenClaw 是为 **Molty** 构建的，一只太空龙虾 AI 助手。🦞
 使用中文版安装脚本:
 
 ```bash
-curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/JC0v0/openclaw_cn/main/scripts/install-zh.sh | bash
+curl -fsSL --proto '=https' --tlsv1.2 https://raw.githubusercontent.com/JC0v0/openclaw_zh/main/scripts/install-zh.sh | bash
 ```
 
 ### 仓库地址
