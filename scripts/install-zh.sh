@@ -340,9 +340,9 @@ OpenClaw 中文版安装程序 (macOS + Linux)
   curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install.sh | bash -s -- [选项]
 
 选项:
-  --install-method, --method npm|git   通过 npm (默认) 或 git checkout 安装
+  --install-method, --method npm|git   通过 git checkout (默认) 或 npm 安装
   --npm                                --install-method npm 的快捷方式
-  --git, --github                      --install-method git 的快捷方式
+  --git, --github                      --install-method git 的快捷方式 (默认)
   --version <version|dist-tag>         npm 安装版本 (默认: latest)
   --beta                               如果有 beta 版则使用 beta，否则使用 latest
   --git-dir, --dir <path>             Checkout 目录 (默认: ~/openclaw)
@@ -1170,7 +1170,7 @@ EOF
     fi
 
     if [[ -z "$INSTALL_METHOD" ]]; then
-        INSTALL_METHOD="npm"
+        INSTALL_METHOD="git"
     fi
 
     if [[ "$INSTALL_METHOD" != "npm" && "$INSTALL_METHOD" != "git" ]]; then
