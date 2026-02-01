@@ -35,9 +35,17 @@ function formatChannelAccountLabel(params: {
 }
 
 function formatProviderState(entry: ProviderAccountStatus): string {
-  const parts = [entry.state];
+  const stateMap: Record<string, string> = {
+    linked: "已连接",
+    "not linked": "未连接",
+    configured: "已配置",
+    "not configured": "未配置",
+    enabled: "已启用",
+    disabled: "已禁用",
+  };
+  const parts = [stateMap[entry.state] ?? entry.state];
   if (entry.enabled === false && entry.state !== "disabled") {
-    parts.push("disabled");
+    parts.push("已禁用");
   }
   return parts.join(", ");
 }
@@ -168,9 +176,7 @@ export function listProvidersForAgent(params: {
       if (status) {
         providerLines.push(formatProviderEntry(status));
       } else {
-        providerLines.push(
-          `${formatChannelAccountLabel({ provider: channel, accountId })}: unknown`,
-        );
+        providerLines.push(`${formatChannelAccountLabel({ provider: channel, accountId })}: 未知`);
       }
     }
     return providerLines;

@@ -48,7 +48,7 @@ export async function messageCommand(
   const result = needsSpinner
     ? await withProgress(
         {
-          label: action === "poll" ? "Sending poll..." : "Sending...",
+          label: action === "poll" ? "正在发送投票…" : "正在发送…",
           indeterminate: true,
           enabled: true,
         },

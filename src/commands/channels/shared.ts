@@ -14,9 +14,9 @@ export async function requireValidConfig(
     const issues =
       snapshot.issues.length > 0
         ? snapshot.issues.map((issue) => `- ${issue.path}: ${issue.message}`).join("\n")
-        : "Unknown validation issue.";
-    runtime.error(`Config invalid:\n${issues}`);
-    runtime.error(`Fix the config or run ${formatCliCommand("openclaw doctor")}.`);
+        : "未知的验证问题。";
+    runtime.error(`配置无效：\n${issues}`);
+    runtime.error(`请修复配置或运行 ${formatCliCommand("openclaw doctor")}。`);
     runtime.exit(1);
     return null;
   }

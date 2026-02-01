@@ -68,7 +68,7 @@ export function registerDirectoryCli(program: Command) {
     const channelId = selection.channel;
     const plugin = getChannelPlugin(channelId);
     if (!plugin) {
-      throw new Error(`Unsupported channel: ${String(channelId)}`);
+      throw new Error(`不支持的渠道：${String(channelId)}`);
     }
     const accountId = opts.account?.trim() || resolveChannelDefaultAccountId({ plugin, cfg });
     return { cfg, channelId, accountId, plugin };
@@ -82,7 +82,7 @@ export function registerDirectoryCli(program: Command) {
       });
       const fn = plugin.directory?.self;
       if (!fn) {
-        throw new Error(`Channel ${channelId} does not support directory self`);
+        throw new Error(`渠道 ${channelId} 不支持目录自我查询`);
       }
       const result = await fn({ cfg, accountId, runtime: defaultRuntime });
       if (opts.json) {
@@ -90,17 +90,17 @@ export function registerDirectoryCli(program: Command) {
         return;
       }
       if (!result) {
-        defaultRuntime.log(theme.muted("Not available."));
+        defaultRuntime.log(theme.muted("不可用。"));
         return;
       }
       const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-      defaultRuntime.log(`${theme.heading("Self")}`);
+      defaultRuntime.log(`${theme.heading("自己")}`);
       defaultRuntime.log(
         renderTable({
           width: tableWidth,
           columns: [
             { key: "ID", header: "ID", minWidth: 16, flex: true },
-            { key: "Name", header: "Name", minWidth: 18, flex: true },
+            { key: "Name", header: "名称", minWidth: 18, flex: true },
           ],
           rows: buildRows([result]),
         }).trimEnd(),
@@ -123,7 +123,7 @@ export function registerDirectoryCli(program: Command) {
         });
         const fn = plugin.directory?.listPeers;
         if (!fn) {
-          throw new Error(`Channel ${channelId} does not support directory peers`);
+          throw new Error(`渠道 ${channelId} 不支持目录对等方查询`);
         }
         const result = await fn({
           cfg,
@@ -137,17 +137,17 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No peers found."));
+          defaultRuntime.log(theme.muted("未找到对等方。"));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(`${theme.heading("Peers")} ${theme.muted(`(${result.length})`)}`);
+        defaultRuntime.log(`${theme.heading("对等方")} ${theme.muted(`(${result.length})`)}`);
         defaultRuntime.log(
           renderTable({
             width: tableWidth,
             columns: [
               { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
+              { key: "Name", header: "名称", minWidth: 18, flex: true },
             ],
             rows: buildRows(result),
           }).trimEnd(),
@@ -170,7 +170,7 @@ export function registerDirectoryCli(program: Command) {
         });
         const fn = plugin.directory?.listGroups;
         if (!fn) {
-          throw new Error(`Channel ${channelId} does not support directory groups`);
+          throw new Error(`渠道 ${channelId} 不支持目录群组查询`);
         }
         const result = await fn({
           cfg,
@@ -184,17 +184,17 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No groups found."));
+          defaultRuntime.log(theme.muted("未找到群组。"));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(`${theme.heading("Groups")} ${theme.muted(`(${result.length})`)}`);
+        defaultRuntime.log(`${theme.heading("群组")} ${theme.muted(`(${result.length})`)}`);
         defaultRuntime.log(
           renderTable({
             width: tableWidth,
             columns: [
               { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
+              { key: "Name", header: "名称", minWidth: 18, flex: true },
             ],
             rows: buildRows(result),
           }).trimEnd(),
@@ -220,11 +220,11 @@ export function registerDirectoryCli(program: Command) {
         });
         const fn = plugin.directory?.listGroupMembers;
         if (!fn) {
-          throw new Error(`Channel ${channelId} does not support group members listing`);
+          throw new Error(`渠道 ${channelId} 不支持群组成员列表`);
         }
         const groupId = String(opts.groupId ?? "").trim();
         if (!groupId) {
-          throw new Error("Missing --group-id");
+          throw new Error("缺少 --group-id");
         }
         const result = await fn({
           cfg,
@@ -238,19 +238,17 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No group members found."));
+          defaultRuntime.log(theme.muted("未找到群组成员。"));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(
-          `${theme.heading("Group Members")} ${theme.muted(`(${result.length})`)}`,
-        );
+        defaultRuntime.log(`${theme.heading("群组成员")} ${theme.muted(`(${result.length})`)}`);
         defaultRuntime.log(
           renderTable({
             width: tableWidth,
             columns: [
               { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
+              { key: "Name", header: "名称", minWidth: 18, flex: true },
             ],
             rows: buildRows(result),
           }).trimEnd(),

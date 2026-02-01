@@ -16,7 +16,7 @@ const normalizeWakeMode = (raw: unknown) => {
   if (mode === "now" || mode === "next-heartbeat") {
     return mode;
   }
-  throw new Error("--mode must be now or next-heartbeat");
+  throw new Error("--mode 必须是 now 或 next-heartbeat");
 };
 
 export function registerSystemCli(program: Command) {
@@ -40,7 +40,7 @@ export function registerSystemCli(program: Command) {
     try {
       const text = typeof opts.text === "string" ? opts.text.trim() : "";
       if (!text) {
-        throw new Error("--text is required");
+        throw new Error("--text 是必需的");
       }
       const mode = normalizeWakeMode(opts.mode);
       const result = await callGatewayFromCli("wake", opts, { mode, text }, { expectFinal: false });

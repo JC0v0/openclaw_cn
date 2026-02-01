@@ -47,11 +47,11 @@ function parsePath(raw: string): PathSegment[] {
       current = "";
       const close = trimmed.indexOf("]", i);
       if (close === -1) {
-        throw new Error(`Invalid path (missing "]"): ${raw}`);
+        throw new Error(`路径无效（缺少 "]"）：${raw}`);
       }
       const inside = trimmed.slice(i + 1, close).trim();
       if (!inside) {
-        throw new Error(`Invalid path (empty "[]"): ${raw}`);
+        throw new Error(`路径无效（缺少 "[]"）：${raw}`);
       }
       parts.push(inside);
       i = close + 1;
@@ -117,7 +117,7 @@ function setAtPath(root: Record<string, unknown>, path: PathSegment[], value: un
     const nextIsIndex = Boolean(next && isIndexSegment(next));
     if (Array.isArray(current)) {
       if (!isIndexSegment(segment)) {
-        throw new Error(`Expected numeric index for array segment "${segment}"`);
+        throw new Error(`数组段 "${segment}" 需要数字索引`);
       }
       const index = Number.parseInt(segment, 10);
       const existing = current[index];
@@ -128,7 +128,7 @@ function setAtPath(root: Record<string, unknown>, path: PathSegment[], value: un
       continue;
     }
     if (!current || typeof current !== "object") {
-      throw new Error(`Cannot traverse into "${segment}" (not an object)`);
+      throw new Error(`无法遍历到 "${segment}"（不是对象）`);
     }
     const record = current as Record<string, unknown>;
     const existing = record[segment];
@@ -141,14 +141,14 @@ function setAtPath(root: Record<string, unknown>, path: PathSegment[], value: un
   const last = path[path.length - 1];
   if (Array.isArray(current)) {
     if (!isIndexSegment(last)) {
-      throw new Error(`Expected numeric index for array segment "${last}"`);
+      throw new Error(`数组段 "${last}" 需要数字索引`);
     }
     const index = Number.parseInt(last, 10);
     current[index] = value;
     return;
   }
   if (!current || typeof current !== "object") {
-    throw new Error(`Cannot set "${last}" (parent is not an object)`);
+    throw new Error(`无法设置 "${last}"（父级不是对象）`);
   }
   (current as Record<string, unknown>)[last] = value;
 }
@@ -208,7 +208,7 @@ async function loadValidConfig() {
   }
   defaultRuntime.error(`配置无效：${shortenHomePath(snapshot.path)}。`);
   for (const issue of snapshot.issues) {
-    defaultRuntime.error(`- ${issue.path || "<root>"}: ${issue.message}`);
+    defaultRuntime.error(`- ${issue.path || "<根节点>"}: ${issue.message}`);
   }
   defaultRuntime.error(`运行 \`${formatCliCommand("openclaw doctor")}\` 修复，然后重试。`);
   defaultRuntime.exit(1);
@@ -257,7 +257,7 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("get")
-    .description("通过点路径获取配置值")
+    .description("获取配置值（点路径）")
     .argument("<path>", "配置路径（点或括号表示法）")
     .option("--json", "输出 JSON", false)
     .action(async (path: string, opts) => {
@@ -294,7 +294,7 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("set")
-    .description("通过点路径设置配置值")
+    .description("设置配置值（点路径）")
     .argument("<path>", "配置路径（点或括号表示法）")
     .argument("<value>", "值（JSON5 或原始字符串）")
     .option("--json", "将值解析为 JSON5（必需）", false)
@@ -318,7 +318,7 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("unset")
-    .description("通过点路径删除配置值")
+    .description("删除配置值（点路径）")
     .argument("<path>", "配置路径（点或括号表示法）")
     .action(async (path: string) => {
       try {

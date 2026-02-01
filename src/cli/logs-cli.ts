@@ -123,7 +123,7 @@ function createLogWriters() {
     onBrokenPipe: (err, stream) => {
       const code = err.code ?? "EPIPE";
       const target = stream === process.stdout ? "stdout" : "stderr";
-      const message = `openclaw logs: output ${target} closed (${code}). Stopping tail.`;
+      const message = `openclaw logs: 输出 ${target} 已关闭 (${code})。正在停止跟踪。`;
       try {
         clearActiveProgressLine();
         process.stderr.write(`${message}\n`);
@@ -150,8 +150,8 @@ function emitGatewayError(
   errorLine: (text: string) => boolean,
 ) {
   const details = buildGatewayConnectionDetails({ url: opts.url });
-  const message = "Gateway not reachable. Is it running and accessible?";
-  const hint = `Hint: run \`${formatCliCommand("openclaw doctor")}\`.`;
+  const message = "无法访问网关。它是否正在运行且可访问？";
+  const hint = `提示：运行 \`${formatCliCommand("openclaw doctor")}\`.`;
   const errorText = err instanceof Error ? err.message : String(err);
 
   if (mode === "json") {
@@ -250,7 +250,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log tail truncated (increase --max-bytes).",
+              message: "日志尾部被截断（增加 --max-bytes）。",
             })
           ) {
             return;
@@ -260,7 +260,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log cursor reset (file rotated).",
+              message: "日志游标已重置（文件轮转）。",
             })
           ) {
             return;
@@ -268,7 +268,7 @@ export function registerLogsCli(program: Command) {
         }
       } else {
         if (first && payload.file) {
-          const prefix = pretty ? colorize(rich, theme.muted, "Log file:") : "Log file:";
+          const prefix = pretty ? colorize(rich, theme.muted, "日志文件：") : "日志文件：";
           if (!logLine(`${prefix} ${payload.file}`)) {
             return;
           }
@@ -286,12 +286,12 @@ export function registerLogsCli(program: Command) {
           }
         }
         if (payload.truncated) {
-          if (!errorLine("Log tail truncated (increase --max-bytes).")) {
+          if (!errorLine("日志尾部被截断（增加 --max-bytes）。")) {
             return;
           }
         }
         if (payload.reset) {
-          if (!errorLine("Log cursor reset (file rotated).")) {
+          if (!errorLine("日志游标已重置（文件轮转）。")) {
             return;
           }
         }

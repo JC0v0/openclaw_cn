@@ -24,24 +24,24 @@ export async function removeChannelConfigWizard(
     if (configured.length === 0) {
       note(
         [
-          "No channel config found in openclaw.json.",
-          `Tip: \`${formatCliCommand("openclaw channels status")}\` shows what is configured and enabled.`,
+          "在 openclaw.json 中未找到频道配置。",
+          `提示：\`${formatCliCommand("openclaw channels status")}\` 显示已配置和启用的内容。`,
         ].join("\n"),
-        "Remove channel",
+        "移除频道",
       );
       return next;
     }
 
     const channel = guardCancel(
       await select({
-        message: "Remove which channel config?",
+        message: "要移除哪个频道配置？",
         options: [
           ...configured.map((meta) => ({
             value: meta.id,
             label: meta.label,
-            hint: "Deletes tokens + settings from config (credentials stay on disk)",
+            hint: "从配置中删除令牌和设置（凭据保留在磁盘上）",
           })),
-          { value: "done", label: "Done" },
+          { value: "done", label: "完成" },
         ],
       }),
       runtime,
@@ -72,11 +72,6 @@ export async function removeChannelConfigWizard(
         : undefined,
     };
 
-    note(
-      [`${label} removed from config.`, "Note: credentials/sessions on disk are unchanged."].join(
-        "\n",
-      ),
-      "Channel removed",
-    );
+    note([`${label} 已从配置中移除。`, "注意：磁盘上的凭据/会话未更改。"].join("\n"), "频道已移除");
   }
 }

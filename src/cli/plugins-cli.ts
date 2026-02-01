@@ -34,10 +34,10 @@ export type PluginUpdateOptions = {
 function formatPluginLine(plugin: PluginRecord, verbose = false): string {
   const status =
     plugin.status === "loaded"
-      ? theme.success("loaded")
+      ? theme.success("已加载")
       : plugin.status === "disabled"
-        ? theme.warn("disabled")
-        : theme.error("error");
+        ? theme.warn("已禁用")
+        : theme.error("错误");
   const name = theme.command(plugin.name || plugin.id);
   const idSuffix = plugin.name && plugin.name !== plugin.id ? theme.muted(` (${plugin.id})`) : "";
   const desc = plugin.description
@@ -46,7 +46,7 @@ function formatPluginLine(plugin: PluginRecord, verbose = false): string {
           ? `${plugin.description.slice(0, 57)}...`
           : plugin.description,
       )
-    : theme.muted("(no description)");
+    : theme.muted("（无描述）");
 
   if (!verbose) {
     return `${name}${idSuffix} ${status} - ${desc}`;
@@ -54,17 +54,17 @@ function formatPluginLine(plugin: PluginRecord, verbose = false): string {
 
   const parts = [
     `${name}${idSuffix} ${status}`,
-    `  source: ${theme.muted(shortenHomeInString(plugin.source))}`,
-    `  origin: ${plugin.origin}`,
+    `  来源：${theme.muted(shortenHomeInString(plugin.source))}`,
+    `  起源：${plugin.origin}`,
   ];
   if (plugin.version) {
-    parts.push(`  version: ${plugin.version}`);
+    parts.push(`  版本：${plugin.version}`);
   }
   if (plugin.providerIds.length > 0) {
-    parts.push(`  providers: ${plugin.providerIds.join(", ")}`);
+    parts.push(`  提供者：${plugin.providerIds.join("、")}`);
   }
   if (plugin.error) {
-    parts.push(theme.error(`  error: ${plugin.error}`));
+    parts.push(theme.error(`  错误：${plugin.error}`));
   }
   return parts.join("\n");
 }
@@ -129,13 +129,13 @@ export function registerPluginsCli(program: Command) {
       }
 
       if (list.length === 0) {
-        defaultRuntime.log(theme.muted("No plugins found."));
+        defaultRuntime.log(theme.muted("未找到插件。"));
         return;
       }
 
       const loaded = list.filter((p) => p.status === "loaded").length;
       defaultRuntime.log(
-        `${theme.heading("Plugins")} ${theme.muted(`(${loaded}/${list.length} loaded)`)}`,
+        `${theme.heading("插件")} ${theme.muted(`(${loaded}/${list.length} 已加载)`)}`,
       );
 
       if (!opts.verbose) {
@@ -144,27 +144,27 @@ export function registerPluginsCli(program: Command) {
           const desc = plugin.description ? theme.muted(plugin.description) : "";
           const sourceLine = desc ? `${plugin.source}\n${desc}` : plugin.source;
           return {
-            Name: plugin.name || plugin.id,
+            名称: plugin.name || plugin.id,
             ID: plugin.name && plugin.name !== plugin.id ? plugin.id : "",
-            Status:
+            状态:
               plugin.status === "loaded"
-                ? theme.success("loaded")
+                ? theme.success("已加载")
                 : plugin.status === "disabled"
-                  ? theme.warn("disabled")
-                  : theme.error("error"),
-            Source: sourceLine,
-            Version: plugin.version ?? "",
+                  ? theme.warn("已禁用")
+                  : theme.error("错误"),
+            来源: sourceLine,
+            版本: plugin.version ?? "",
           };
         });
         defaultRuntime.log(
           renderTable({
             width: tableWidth,
             columns: [
-              { key: "Name", header: "Name", minWidth: 14, flex: true },
+              { key: "名称", header: "名称", minWidth: 14, flex: true },
               { key: "ID", header: "ID", minWidth: 10, flex: true },
-              { key: "Status", header: "Status", minWidth: 10 },
-              { key: "Source", header: "Source", minWidth: 26, flex: true },
-              { key: "Version", header: "Version", minWidth: 8 },
+              { key: "状态", header: "状态", minWidth: 10 },
+              { key: "来源", header: "来源", minWidth: 26, flex: true },
+              { key: "版本", header: "版本", minWidth: 8 },
             ],
             rows,
           }).trimEnd(),
@@ -189,7 +189,7 @@ export function registerPluginsCli(program: Command) {
       const report = buildPluginStatusReport();
       const plugin = report.plugins.find((p) => p.id === id || p.name === id);
       if (!plugin) {
-        defaultRuntime.error(`Plugin not found: ${id}`);
+        defaultRuntime.error(`未找到插件：${id}`);
         process.exit(1);
       }
       const cfg = loadConfig();
@@ -203,56 +203,56 @@ export function registerPluginsCli(program: Command) {
       const lines: string[] = [];
       lines.push(theme.heading(plugin.name || plugin.id));
       if (plugin.name && plugin.name !== plugin.id) {
-        lines.push(theme.muted(`id: ${plugin.id}`));
+        lines.push(theme.muted(`id：${plugin.id}`));
       }
       if (plugin.description) {
         lines.push(plugin.description);
       }
       lines.push("");
-      lines.push(`${theme.muted("Status:")} ${plugin.status}`);
-      lines.push(`${theme.muted("Source:")} ${shortenHomeInString(plugin.source)}`);
-      lines.push(`${theme.muted("Origin:")} ${plugin.origin}`);
+      lines.push(`${theme.muted("状态：")} ${plugin.status}`);
+      lines.push(`${theme.muted("来源：")} ${shortenHomeInString(plugin.source)}`);
+      lines.push(`${theme.muted("起源：")} ${plugin.origin}`);
       if (plugin.version) {
-        lines.push(`${theme.muted("Version:")} ${plugin.version}`);
+        lines.push(`${theme.muted("版本：")} ${plugin.version}`);
       }
       if (plugin.toolNames.length > 0) {
-        lines.push(`${theme.muted("Tools:")} ${plugin.toolNames.join(", ")}`);
+        lines.push(`${theme.muted("工具：")} ${plugin.toolNames.join("、")}`);
       }
       if (plugin.hookNames.length > 0) {
-        lines.push(`${theme.muted("Hooks:")} ${plugin.hookNames.join(", ")}`);
+        lines.push(`${theme.muted("钩子：")} ${plugin.hookNames.join("、")}`);
       }
       if (plugin.gatewayMethods.length > 0) {
-        lines.push(`${theme.muted("Gateway methods:")} ${plugin.gatewayMethods.join(", ")}`);
+        lines.push(`${theme.muted("网关方法：")} ${plugin.gatewayMethods.join("、")}`);
       }
       if (plugin.providerIds.length > 0) {
-        lines.push(`${theme.muted("Providers:")} ${plugin.providerIds.join(", ")}`);
+        lines.push(`${theme.muted("提供者：")} ${plugin.providerIds.join("、")}`);
       }
       if (plugin.cliCommands.length > 0) {
-        lines.push(`${theme.muted("CLI commands:")} ${plugin.cliCommands.join(", ")}`);
+        lines.push(`${theme.muted("CLI 命令：")} ${plugin.cliCommands.join("、")}`);
       }
       if (plugin.services.length > 0) {
-        lines.push(`${theme.muted("Services:")} ${plugin.services.join(", ")}`);
+        lines.push(`${theme.muted("服务：")} ${plugin.services.join("、")}`);
       }
       if (plugin.error) {
-        lines.push(`${theme.error("Error:")} ${plugin.error}`);
+        lines.push(`${theme.error("错误：")} ${plugin.error}`);
       }
       if (install) {
         lines.push("");
-        lines.push(`${theme.muted("Install:")} ${install.source}`);
+        lines.push(`${theme.muted("安装：")} ${install.source}`);
         if (install.spec) {
-          lines.push(`${theme.muted("Spec:")} ${install.spec}`);
+          lines.push(`${theme.muted("规格：")} ${install.spec}`);
         }
         if (install.sourcePath) {
-          lines.push(`${theme.muted("Source path:")} ${shortenHomePath(install.sourcePath)}`);
+          lines.push(`${theme.muted("来源路径：")} ${shortenHomePath(install.sourcePath)}`);
         }
         if (install.installPath) {
-          lines.push(`${theme.muted("Install path:")} ${shortenHomePath(install.installPath)}`);
+          lines.push(`${theme.muted("安装路径：")} ${shortenHomePath(install.installPath)}`);
         }
         if (install.version) {
-          lines.push(`${theme.muted("Recorded version:")} ${install.version}`);
+          lines.push(`${theme.muted("记录版本：")} ${install.version}`);
         }
         if (install.installedAt) {
-          lines.push(`${theme.muted("Installed at:")} ${install.installedAt}`);
+          lines.push(`${theme.muted("安装时间：")} ${install.installedAt}`);
         }
       }
       defaultRuntime.log(lines.join("\n"));
@@ -281,7 +281,7 @@ export function registerPluginsCli(program: Command) {
       next = slotResult.config;
       await writeConfigFile(next);
       logSlotWarnings(slotResult.warnings);
-      defaultRuntime.log(`Enabled plugin "${id}". Restart the gateway to apply.`);
+      defaultRuntime.log(`已启用插件 "${id}"。重启网关以应用。`);
     });
 
   plugins
@@ -304,7 +304,7 @@ export function registerPluginsCli(program: Command) {
         },
       };
       await writeConfigFile(next);
-      defaultRuntime.log(`Disabled plugin "${id}". Restart the gateway to apply.`);
+      defaultRuntime.log(`已禁用插件 "${id}"。重启网关以应用。`);
     });
 
   plugins
@@ -354,8 +354,8 @@ export function registerPluginsCli(program: Command) {
           next = slotResult.config;
           await writeConfigFile(next);
           logSlotWarnings(slotResult.warnings);
-          defaultRuntime.log(`Linked plugin path: ${shortenHomePath(resolved)}`);
-          defaultRuntime.log(`Restart the gateway to load plugins.`);
+          defaultRuntime.log(`已链接插件路径：${shortenHomePath(resolved)}`);
+          defaultRuntime.log(`重启网关以加载插件。`);
           return;
         }
 
@@ -396,13 +396,13 @@ export function registerPluginsCli(program: Command) {
         next = slotResult.config;
         await writeConfigFile(next);
         logSlotWarnings(slotResult.warnings);
-        defaultRuntime.log(`Installed plugin: ${result.pluginId}`);
-        defaultRuntime.log(`Restart the gateway to load plugins.`);
+        defaultRuntime.log(`已安装插件：${result.pluginId}`);
+        defaultRuntime.log(`重启网关以加载插件。`);
         return;
       }
 
       if (opts.link) {
-        defaultRuntime.error("`--link` requires a local path.");
+        defaultRuntime.error("`--link` 需要本地路径。");
         process.exit(1);
       }
 
@@ -419,7 +419,7 @@ export function registerPluginsCli(program: Command) {
         raw.endsWith(".tar") ||
         raw.endsWith(".zip");
       if (looksLikePath) {
-        defaultRuntime.error(`Path not found: ${resolved}`);
+        defaultRuntime.error(`路径未找到：${resolved}`);
         process.exit(1);
       }
 
@@ -459,8 +459,8 @@ export function registerPluginsCli(program: Command) {
       next = slotResult.config;
       await writeConfigFile(next);
       logSlotWarnings(slotResult.warnings);
-      defaultRuntime.log(`Installed plugin: ${result.pluginId}`);
-      defaultRuntime.log(`Restart the gateway to load plugins.`);
+      defaultRuntime.log(`已安装插件：${result.pluginId}`);
+      defaultRuntime.log(`重启网关以加载插件。`);
     });
 
   plugins
@@ -476,10 +476,10 @@ export function registerPluginsCli(program: Command) {
 
       if (targets.length === 0) {
         if (opts.all) {
-          defaultRuntime.log("No npm-installed plugins to update.");
+          defaultRuntime.log("没有需要更新的 npm 安装插件。");
           return;
         }
-        defaultRuntime.error("Provide a plugin id or use --all.");
+        defaultRuntime.error("提供插件 id 或使用 --all。");
         process.exit(1);
       }
 
@@ -507,7 +507,7 @@ export function registerPluginsCli(program: Command) {
 
       if (!opts.dryRun && result.changed) {
         await writeConfigFile(result.config);
-        defaultRuntime.log("Restart the gateway to load plugins.");
+        defaultRuntime.log("重启网关以加载插件。");
       }
     });
 
@@ -520,22 +520,22 @@ export function registerPluginsCli(program: Command) {
       const diags = report.diagnostics.filter((d) => d.level === "error");
 
       if (errors.length === 0 && diags.length === 0) {
-        defaultRuntime.log("No plugin issues detected.");
+        defaultRuntime.log("未检测到插件问题。");
         return;
       }
 
       const lines: string[] = [];
       if (errors.length > 0) {
-        lines.push(theme.error("Plugin errors:"));
+        lines.push(theme.error("插件错误："));
         for (const entry of errors) {
-          lines.push(`- ${entry.id}: ${entry.error ?? "failed to load"} (${entry.source})`);
+          lines.push(`- ${entry.id}: ${entry.error ?? "加载失败"} (${entry.source})`);
         }
       }
       if (diags.length > 0) {
         if (lines.length > 0) {
           lines.push("");
         }
-        lines.push(theme.warn("Diagnostics:"));
+        lines.push(theme.warn("诊断信息："));
         for (const diag of diags) {
           const target = diag.pluginId ? `${diag.pluginId}: ` : "";
           lines.push(`- ${target}${diag.message}`);
@@ -543,7 +543,7 @@ export function registerPluginsCli(program: Command) {
       }
       const docs = formatDocsLink("/plugin", "docs.openclaw.ai/plugin");
       lines.push("");
-      lines.push(`${theme.muted("Docs:")} ${docs}`);
+      lines.push(`${theme.muted("文档：")} ${docs}`);
       defaultRuntime.log(lines.join("\n"));
     });
 }

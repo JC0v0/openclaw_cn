@@ -27,9 +27,7 @@ export function registerTuiCli(program: Command) {
       try {
         const timeoutMs = parseTimeoutMs(opts.timeoutMs);
         if (opts.timeoutMs !== undefined && timeoutMs === undefined) {
-          defaultRuntime.error(
-            `warning: invalid --timeout-ms "${String(opts.timeoutMs)}"; ignoring`,
-          );
+          defaultRuntime.error(`警告：无效的 --timeout-ms "${String(opts.timeoutMs)}"；已忽略`);
         }
         const historyLimit = Number.parseInt(String(opts.historyLimit ?? "200"), 10);
         await runTui({

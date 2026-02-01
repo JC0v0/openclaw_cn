@@ -65,13 +65,13 @@ async function waitForLocalCallback(params: {
         if (!code) {
           res.statusCode = 400;
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.end("Missing code");
+          res.end("缺少代码");
           return;
         }
         if (!state || state !== params.expectedState) {
           res.statusCode = 400;
           res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.end("Invalid state");
+          res.end("无效的 state");
           return;
         }
 
@@ -81,8 +81,8 @@ async function waitForLocalCallback(params: {
           [
             "<!doctype html>",
             "<html><head><meta charset='utf-8' /></head>",
-            "<body><h2>Chutes OAuth complete</h2>",
-            "<p>You can close this window and return to OpenClaw.</p></body></html>",
+            "<body><h2>Chutes OAuth 完成</h2>",
+            "<p>您可以关闭此窗口并返回 OpenClaw。</p></body></html>",
           ].join(""),
         );
         if (timeout) {
@@ -107,14 +107,14 @@ async function waitForLocalCallback(params: {
       reject(err);
     });
     server.listen(port, hostname, () => {
-      params.onProgress?.(`Waiting for OAuth callback on ${redirectUrl.origin}${expectedPath}…`);
+      params.onProgress?.(`正在等待 OAuth 回调 ${redirectUrl.origin}${expectedPath}…`);
     });
 
     timeout = setTimeout(() => {
       try {
         server.close();
       } catch {}
-      reject(new Error("OAuth callback timeout"));
+      reject(new Error("OAuth 回调超时"));
     }, params.timeoutMs);
   });
 }
@@ -148,9 +148,9 @@ export async function loginChutes(params: {
   let codeAndState: { code: string; state: string };
   if (params.manual) {
     await params.onAuth({ url });
-    params.onProgress?.("Waiting for redirect URL…");
+    params.onProgress?.("正在等待重定向 URL…");
     const input = await params.onPrompt({
-      message: "Paste the redirect URL (or authorization code)",
+      message: "粘贴重定向 URL（或授权码）",
       placeholder: `${params.app.redirectUri}?code=...&state=...`,
     });
     const parsed = parseOAuthCallbackInput(String(input), state);
@@ -158,7 +158,7 @@ export async function loginChutes(params: {
       throw new Error(parsed.error);
     }
     if (parsed.state !== state) {
-      throw new Error("Invalid OAuth state");
+      throw new Error("无效的 OAuth state");
     }
     codeAndState = parsed;
   } else {
@@ -168,9 +168,9 @@ export async function loginChutes(params: {
       timeoutMs,
       onProgress: params.onProgress,
     }).catch(async () => {
-      params.onProgress?.("OAuth callback not detected; paste redirect URL…");
+      params.onProgress?.("未检测到 OAuth 回调；粘贴重定向 URL…");
       const input = await params.onPrompt({
-        message: "Paste the redirect URL (or authorization code)",
+        message: "粘贴重定向 URL（或授权码）",
         placeholder: `${params.app.redirectUri}?code=...&state=...`,
       });
       const parsed = parseOAuthCallbackInput(String(input), state);
@@ -178,7 +178,7 @@ export async function loginChutes(params: {
         throw new Error(parsed.error);
       }
       if (parsed.state !== state) {
-        throw new Error("Invalid OAuth state");
+        throw new Error("无效的 OAuth state");
       }
       return parsed;
     });
@@ -187,7 +187,7 @@ export async function loginChutes(params: {
     codeAndState = await callback;
   }
 
-  params.onProgress?.("Exchanging code for tokens…");
+  params.onProgress?.("正在交换代码以获取令牌…");
   return await exchangeChutesCodeForTokens({
     app: params.app,
     code: codeAndState.code,

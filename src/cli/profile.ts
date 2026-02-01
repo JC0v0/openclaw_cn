@@ -46,7 +46,7 @@ export function parseCliProfileArgs(argv: string[]): CliProfileParseResult {
 
     if (arg === "--dev") {
       if (profile && profile !== "dev") {
-        return { ok: false, error: "Cannot combine --dev with --profile" };
+        return { ok: false, error: "不能同时使用 --dev 和 --profile" };
       }
       sawDev = true;
       profile = "dev";
@@ -55,7 +55,7 @@ export function parseCliProfileArgs(argv: string[]): CliProfileParseResult {
 
     if (arg === "--profile" || arg.startsWith("--profile=")) {
       if (sawDev) {
-        return { ok: false, error: "Cannot combine --dev with --profile" };
+        return { ok: false, error: "不能同时使用 --dev 和 --profile" };
       }
       const next = args[i + 1];
       const { value, consumedNext } = takeValue(arg, next);
@@ -63,12 +63,12 @@ export function parseCliProfileArgs(argv: string[]): CliProfileParseResult {
         i += 1;
       }
       if (!value) {
-        return { ok: false, error: "--profile requires a value" };
+        return { ok: false, error: "--profile 需要一个值" };
       }
       if (!isValidProfileName(value)) {
         return {
           ok: false,
-          error: 'Invalid --profile (use letters, numbers, "_", "-" only)',
+          error: '无效的 --profile（仅限字母、数字、"_"、"-"）',
         };
       }
       profile = value;

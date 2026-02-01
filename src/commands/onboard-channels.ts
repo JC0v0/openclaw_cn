@@ -42,7 +42,7 @@ type ChannelStatusSummary = {
 };
 
 function formatAccountLabel(accountId: string): string {
-  return accountId === DEFAULT_ACCOUNT_ID ? "default (primary)" : accountId;
+  return accountId === DEFAULT_ACCOUNT_ID ? "默认（主要）" : accountId;
 }
 
 async function promptConfiguredAction(params: {
@@ -75,10 +75,7 @@ async function promptConfiguredAction(params: {
     skipOption,
   ];
   return await prompter.select({
-    message: `${label} already configured. What do you want to do?`.replace(
-      "already configured. What do you want to do?",
-      "已配置。您想要做什么？",
-    ),
+    message: `${label} 已配置。您想要做什么？`,
     options,
     initialValue: "update",
   });
@@ -101,7 +98,7 @@ async function promptRemovalAccountId(params: {
     return defaultAccountId;
   }
   const selected = await prompter.select({
-    message: `${label} account`,
+    message: `${label} 账号`,
     options: accountIds.map((accountId) => ({
       value: accountId,
       label: accountId === DEFAULT_ACCOUNT_ID ? "默认（主要）" : accountId,
@@ -353,16 +350,13 @@ export async function setupChannels(
   const { installedPlugins, catalogEntries, statusByChannel, statusLines } =
     await collectChannelStatus({ cfg: next, options, accountOverrides });
   if (!options?.skipStatusNote && statusLines.length > 0) {
-    await prompter.note(statusLines.join("\n"), "Channel status");
+    await prompter.note(statusLines.join("\n"), "频道状态");
   }
 
   const shouldConfigure = options?.skipConfirm
     ? true
     : await prompter.confirm({
-        message: "Configure chat channels now?".replace(
-          "Configure chat channels now?",
-          "现在配置聊天频道？",
-        ),
+        message: "现在配置聊天频道？",
         initialValue: true,
       });
   if (!shouldConfigure) {

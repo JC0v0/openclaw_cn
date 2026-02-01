@@ -567,7 +567,7 @@ export async function healthCommand(
   // Always query the running gateway; do not open a direct Baileys socket here.
   const summary = await withProgress(
     {
-      label: "Checking gateway health…",
+      label: "正在检查网关健康状态…",
       indeterminate: true,
       enabled: opts.json !== true,
     },

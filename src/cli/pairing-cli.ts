@@ -26,13 +26,13 @@ function parseChannel(raw: unknown, channels: PairingChannel[]): PairingChannel 
     .trim()
     .toLowerCase();
   if (!value) {
-    throw new Error("Channel required");
+    throw new Error("需要指定渠道");
   }
 
   const normalized = normalizeChannelId(value);
   if (normalized) {
     if (!channels.includes(normalized)) {
-      throw new Error(`Channel ${normalized} does not support pairing`);
+      throw new Error(`渠道 ${normalized} 不支持配对`);
     }
     return normalized;
   }
@@ -41,7 +41,7 @@ function parseChannel(raw: unknown, channels: PairingChannel[]): PairingChannel 
   if (/^[a-z][a-z0-9_-]{0,63}$/.test(value)) {
     return value as PairingChannel;
   }
-  throw new Error(`Invalid channel: ${value}`);
+  throw new Error(`无效的渠道：${value}`);
 }
 
 async function notifyApproved(channel: PairingChannel, id: string) {
@@ -70,7 +70,7 @@ export function registerPairingCli(program: Command) {
       const channelRaw = opts.channel ?? channelArg;
       if (!channelRaw) {
         throw new Error(
-          `Channel required. Use --channel <channel> or pass it as the first argument (expected one of: ${channels.join(", ")})`,
+          `需要指定渠道。使用 --channel <channel> 或将其作为第一个参数传递（预期为以下之一：${channels.join(", ")})`,
         );
       }
       const channel = parseChannel(channelRaw, channels);
@@ -80,22 +80,20 @@ export function registerPairingCli(program: Command) {
         return;
       }
       if (requests.length === 0) {
-        defaultRuntime.log(theme.muted(`No pending ${channel} pairing requests.`));
+        defaultRuntime.log(theme.muted(`没有待处理的 ${channel} 配对请求。`));
         return;
       }
       const idLabel = resolvePairingIdLabel(channel);
       const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-      defaultRuntime.log(
-        `${theme.heading("Pairing requests")} ${theme.muted(`(${requests.length})`)}`,
-      );
+      defaultRuntime.log(`${theme.heading("配对请求")} ${theme.muted(`(${requests.length})`)}`);
       defaultRuntime.log(
         renderTable({
           width: tableWidth,
           columns: [
-            { key: "Code", header: "Code", minWidth: 10 },
+            { key: "Code", header: "代码", minWidth: 10 },
             { key: "ID", header: idLabel, minWidth: 12, flex: true },
-            { key: "Meta", header: "Meta", minWidth: 8, flex: true },
-            { key: "Requested", header: "Requested", minWidth: 12 },
+            { key: "Meta", header: "元数据", minWidth: 8, flex: true },
+            { key: "Requested", header: "请求时间", minWidth: 12 },
           ],
           rows: requests.map((r) => ({
             Code: r.code,
@@ -144,7 +142,7 @@ export function registerPairingCli(program: Command) {
         return;
       }
       await notifyApproved(channel, approved.id).catch((err) => {
-        defaultRuntime.log(theme.warn(`Failed to notify requester: ${String(err)}`));
+        defaultRuntime.log(theme.warn(`通知请求者失败：${String(err)}`));
       });
     });
 }

@@ -174,7 +174,7 @@ macOS 应用可以在**节点模式**下运行，并通过网关 WebSocket（`no
 
 详情: [节点](https://docs.openclaw.ai/nodes) · [macOS 应用](https://docs.openclaw.ai/platforms/macos) · [网关协议](https://docs.openclaw.ai/concepts/architecture)
 
-### 代理到代理（sessions_* 工具）
+### 代理到代理（sessions\_\* 工具）
 
 - 使用这些工具跨会话协调工作，而无需在聊天界面之间跳转
 - `sessions_list` — 发现活动会话（代理）及其元数据

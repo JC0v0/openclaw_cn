@@ -56,13 +56,13 @@ type ChannelCapabilitiesReport = {
 const REQUIRED_DISCORD_PERMISSIONS = ["ViewChannel", "SendMessages"] as const;
 
 const TEAMS_GRAPH_PERMISSION_HINTS: Record<string, string> = {
-  "ChannelMessage.Read.All": "channel history",
-  "Chat.Read.All": "chat history",
-  "Channel.ReadBasic.All": "channel list",
-  "Team.ReadBasic.All": "team list",
-  "TeamsActivity.Read.All": "teams activity",
-  "Sites.Read.All": "files (SharePoint)",
-  "Files.Read.All": "files (OneDrive)",
+  "ChannelMessage.Read.All": "频道历史",
+  "Chat.Read.All": "聊天历史",
+  "Channel.ReadBasic.All": "频道列表",
+  "Team.ReadBasic.All": "团队列表",
+  "TeamsActivity.Read.All": "团队活动",
+  "Sites.Read.All": "文件（SharePoint）",
+  "Files.Read.All": "文件（OneDrive）",
 };
 
 function normalizeTimeout(raw: unknown, fallback = 10_000) {
@@ -290,7 +290,7 @@ async function buildDiscordPermissions(params: {
     return {
       target,
       report: {
-        error: "Target looks like a DM user; pass channel:<id> to audit channel permissions.",
+        error: "目标看起来像是私信用户；请使用 channel:<id> 来审核频道权限。",
       },
     };
   }
@@ -300,7 +300,7 @@ async function buildDiscordPermissions(params: {
       target,
       report: {
         channelId: target.channelId,
-        error: "Discord bot token missing for permission audit.",
+        error: "缺少 Discord 机器人令牌，无法审核权限。",
       },
     };
   }
@@ -393,7 +393,7 @@ async function resolveChannelReports(params: {
       } else {
         scopeReports.push({
           tokenType: "bot",
-          result: { ok: false, error: "Slack bot token missing." },
+          result: { ok: false, error: "缺少 Slack 机器人令牌。" },
         });
       }
       if (userToken) {
@@ -449,12 +449,12 @@ export async function channelsCapabilitiesCommand(
   const rawTarget = typeof opts.target === "string" ? opts.target.trim() : "";
 
   if (opts.account && (!rawChannel || rawChannel === "all")) {
-    runtime.error(danger("--account requires a specific --channel."));
+    runtime.error(danger("--account 选项需要指定具体的 --channel。"));
     runtime.exit(1);
     return;
   }
   if (rawTarget && rawChannel !== "discord") {
-    runtime.error(danger("--target requires --channel discord."));
+    runtime.error(danger("--target 选项需要指定 --channel discord。"));
     runtime.exit(1);
     return;
   }
@@ -472,7 +472,7 @@ export async function channelsCapabilitiesCommand(
         })();
 
   if (!selected || selected.length === 0) {
-    runtime.error(danger(`Unknown channel "${rawChannel}".`));
+    runtime.error(danger(`未知的渠道 "${rawChannel}"。`));
     runtime.exit(1);
     return;
   }
@@ -511,20 +511,20 @@ export async function channelsCapabilitiesCommand(
       lines.push(`Actions: ${report.actions.join(", ")}`);
     }
     if (report.configured === false || report.enabled === false) {
-      const configuredLabel = report.configured === false ? "not configured" : "configured";
-      const enabledLabel = report.enabled === false ? "disabled" : "enabled";
+      const configuredLabel = report.configured === false ? "未配置" : "已配置";
+      const enabledLabel = report.enabled === false ? "已禁用" : "已启用";
       lines.push(`Status: ${configuredLabel}, ${enabledLabel}`);
     }
     const probeLines = formatProbeLines(report.channel, report.probe);
     if (probeLines.length > 0) {
       lines.push(...probeLines);
     } else if (report.configured && report.enabled) {
-      lines.push(theme.muted("Probe: unavailable"));
+      lines.push(theme.muted("探测：不可用"));
     }
     if (report.channel === "slack" && report.slackScopes) {
       for (const entry of report.slackScopes) {
         const source = entry.result.source ? ` (${entry.result.source})` : "";
-        const label = entry.tokenType === "user" ? "User scopes" : "Bot scopes";
+        const label = entry.tokenType === "user" ? "用户范围" : "机器人范围";
         if (entry.result.ok && entry.result.scopes?.length) {
           lines.push(`${label}${source}: ${entry.result.scopes.join(", ")}`);
         } else if (entry.result.error) {
@@ -537,17 +537,17 @@ export async function channelsCapabilitiesCommand(
       if (perms.error) {
         lines.push(`Permissions: ${theme.error(perms.error)}`);
       } else {
-        const list = perms.permissions?.length ? perms.permissions.join(", ") : "none";
+        const list = perms.permissions?.length ? perms.permissions.join(", ") : "无";
         const label = perms.channelId ? ` (${perms.channelId})` : "";
-        lines.push(`Permissions${label}: ${list}`);
+        lines.push(`权限${label}：${list}`);
         if (perms.missingRequired && perms.missingRequired.length > 0) {
-          lines.push(`${theme.warn("Missing required:")} ${perms.missingRequired.join(", ")}`);
+          lines.push(`${theme.warn("缺少必需权限：")} ${perms.missingRequired.join(", ")}`);
         } else {
-          lines.push(theme.success("Missing required: none"));
+          lines.push(theme.success("缺少必需权限：无"));
         }
       }
     } else if (report.channel === "discord" && rawTarget && !report.channelPermissions) {
-      lines.push(theme.muted("Permissions: skipped (no target)."));
+      lines.push(theme.muted("权限：已跳过（无目标）。"));
     }
     lines.push("");
   }

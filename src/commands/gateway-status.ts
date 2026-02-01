@@ -75,7 +75,7 @@ export async function gatewayStatusCommand(
 
   const { discovery, probed } = await withProgress(
     {
-      label: "Inspecting gateways…",
+      label: "正在检查网关…",
       indeterminate: true,
       enabled: opts.json !== true,
     },
@@ -202,15 +202,15 @@ export async function gatewayStatusCommand(
     warnings.push({
       code: "ssh_tunnel_failed",
       message: sshTunnelError
-        ? `SSH tunnel failed: ${String(sshTunnelError)}`
-        : "SSH tunnel failed to start; falling back to direct probes.",
+        ? `SSH 隧道失败: ${String(sshTunnelError)}`
+        : "SSH 隧道启动失败；回退到直接探测。",
     });
   }
   if (multipleGateways) {
     warnings.push({
       code: "multiple_gateways",
       message:
-        "Unconventional setup: multiple reachable gateways detected. Usually one gateway per network is recommended unless you intentionally run isolated profiles, like a rescue bot (see docs: /gateway#multiple-gateways-same-host).",
+        "非常规设置: 检测到多个可达的网关。通常建议每个网络使用一个网关，除非您有意运行隔离的配置文件，如救援机器人 (参见文档: /gateway#multiple-gateways-same-host)。",
       targetIds: reachable.map((p) => p.target.id),
     });
   }
@@ -274,42 +274,42 @@ export async function gatewayStatusCommand(
     return;
   }
 
-  runtime.log(colorize(rich, theme.heading, "Gateway Status"));
+  runtime.log(colorize(rich, theme.heading, "网关状态"));
   runtime.log(
     ok
-      ? `${colorize(rich, theme.success, "Reachable")}: yes`
-      : `${colorize(rich, theme.error, "Reachable")}: no`,
+      ? `${colorize(rich, theme.success, "可达")}: 是`
+      : `${colorize(rich, theme.error, "可达")}: 否`,
   );
-  runtime.log(colorize(rich, theme.muted, `Probe budget: ${overallTimeoutMs}ms`));
+  runtime.log(colorize(rich, theme.muted, `探测预算: ${overallTimeoutMs}ms`));
 
   if (warnings.length > 0) {
     runtime.log("");
-    runtime.log(colorize(rich, theme.warn, "Warning:"));
+    runtime.log(colorize(rich, theme.warn, "警告:"));
     for (const w of warnings) {
       runtime.log(`- ${w.message}`);
     }
   }
 
   runtime.log("");
-  runtime.log(colorize(rich, theme.heading, "Discovery (this machine)"));
+  runtime.log(colorize(rich, theme.heading, "发现 (本机)"));
   const discoveryDomains = wideAreaDomain ? `local. + ${wideAreaDomain}` : "local.";
   runtime.log(
     discovery.length > 0
-      ? `Found ${discovery.length} gateway(s) via Bonjour (${discoveryDomains})`
-      : `Found 0 gateways via Bonjour (${discoveryDomains})`,
+      ? `通过 Bonjour 发现 ${discovery.length} 个网关 (${discoveryDomains})`
+      : `通过 Bonjour 发现 0 个网关 (${discoveryDomains})`,
   );
   if (discovery.length === 0) {
     runtime.log(
       colorize(
         rich,
         theme.muted,
-        "Tip: if the gateway is remote, mDNS won’t cross networks; use Wide-Area Bonjour (split DNS) or SSH tunnels.",
+        "提示: 如果网关在远程，mDNS 无法跨越网络；请使用广域 Bonjour (拆分 DNS) 或 SSH 隧道。",
       ),
     );
   }
 
   runtime.log("");
-  runtime.log(colorize(rich, theme.heading, "Targets"));
+  runtime.log(colorize(rich, theme.heading, "目标"));
   for (const p of probed) {
     runtime.log(renderTargetHeader(p.target, rich));
     runtime.log(`  ${renderProbeSummaryLine(p.probe, rich)}`);
@@ -322,8 +322,8 @@ export async function gatewayStatusCommand(
       const host = p.self.host ?? "unknown";
       const ip = p.self.ip ? ` (${p.self.ip})` : "";
       const platform = p.self.platform ? ` · ${p.self.platform}` : "";
-      const version = p.self.version ? ` · app ${p.self.version}` : "";
-      runtime.log(`  ${colorize(rich, theme.info, "Gateway")}: ${host}${ip}${platform}${version}`);
+      const version = p.self.version ? ` · 应用 ${p.self.version}` : "";
+      runtime.log(`  ${colorize(rich, theme.info, "网关")}: ${host}${ip}${platform}${version}`);
     }
     if (p.configSummary) {
       const c = p.configSummary;
@@ -333,7 +333,7 @@ export async function gatewayStatusCommand(
           : c.discovery.wideAreaEnabled === false
             ? "disabled"
             : "unknown";
-      runtime.log(`  ${colorize(rich, theme.info, "Wide-area discovery")}: ${wideArea}`);
+      runtime.log(`  ${colorize(rich, theme.info, "广域发现")}: ${wideArea}`);
     }
     runtime.log("");
   }

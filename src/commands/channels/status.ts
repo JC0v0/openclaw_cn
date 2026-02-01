@@ -20,24 +20,24 @@ export type ChannelsStatusOptions = {
 
 export function formatGatewayChannelsStatusLines(payload: Record<string, unknown>): string[] {
   const lines: string[] = [];
-  lines.push(theme.success("Gateway reachable."));
+  lines.push(theme.success("网关可访问。"));
   const accountLines = (provider: ChatChannel, accounts: Array<Record<string, unknown>>) =>
     accounts.map((account) => {
       const bits: string[] = [];
       if (typeof account.enabled === "boolean") {
-        bits.push(account.enabled ? "enabled" : "disabled");
+        bits.push(account.enabled ? "已启用" : "已禁用");
       }
       if (typeof account.configured === "boolean") {
-        bits.push(account.configured ? "configured" : "not configured");
+        bits.push(account.configured ? "已配置" : "未配置");
       }
       if (typeof account.linked === "boolean") {
-        bits.push(account.linked ? "linked" : "not linked");
+        bits.push(account.linked ? "已关联" : "未关联");
       }
       if (typeof account.running === "boolean") {
-        bits.push(account.running ? "running" : "stopped");
+        bits.push(account.running ? "运行中" : "已停止");
       }
       if (typeof account.connected === "boolean") {
-        bits.push(account.connected ? "connected" : "disconnected");
+        bits.push(account.connected ? "已连接" : "未连接");
       }
       const inboundAt =
         typeof account.lastInboundAt === "number" && Number.isFinite(account.lastInboundAt)
@@ -106,11 +106,11 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
       }
       const probe = account.probe as { ok?: boolean } | undefined;
       if (probe && typeof probe.ok === "boolean") {
-        bits.push(probe.ok ? "works" : "probe failed");
+        bits.push(probe.ok ? "正常" : "探测失败");
       }
       const audit = account.audit as { ok?: boolean } | undefined;
       if (audit && typeof audit.ok === "boolean") {
-        bits.push(audit.ok ? "audit ok" : "audit failed");
+        bits.push(audit.ok ? "审核通过" : "审核失败");
       }
       if (typeof account.lastError === "string" && account.lastError) {
         bits.push(`error:${account.lastError}`);
@@ -145,17 +145,17 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
   lines.push("");
   const issues = collectChannelStatusIssues(payload);
   if (issues.length > 0) {
-    lines.push(theme.warn("Warnings:"));
+    lines.push(theme.warn("警告："));
     for (const issue of issues) {
       lines.push(
         `- ${issue.channel} ${issue.accountId}: ${issue.message}${issue.fix ? ` (${issue.fix})` : ""}`,
       );
     }
-    lines.push(`- Run: ${formatCliCommand("openclaw doctor")}`);
+    lines.push(`- 运行：${formatCliCommand("openclaw doctor")}`);
     lines.push("");
   }
   lines.push(
-    `Tip: ${formatDocsLink("/cli#status", "status --deep")} adds gateway health probes to status output (requires a reachable gateway).`,
+    `提示：${formatDocsLink("/cli#status", "status --deep")} 会向状态输出添加网关健康探测（需要网关可访问）。`,
   );
   return lines;
 }
@@ -165,12 +165,12 @@ async function formatConfigChannelsStatusLines(
   meta: { path?: string; mode?: "local" | "remote" },
 ): Promise<string[]> {
   const lines: string[] = [];
-  lines.push(theme.warn("Gateway not reachable; showing config-only status."));
+  lines.push(theme.warn("网关无法访问；显示仅配置状态。"));
   if (meta.path) {
-    lines.push(`Config: ${meta.path}`);
+    lines.push(`配置：${meta.path}`);
   }
   if (meta.mode) {
-    lines.push(`Mode: ${meta.mode}`);
+    lines.push(`模式：${meta.mode}`);
   }
   if (meta.path || meta.mode) {
     lines.push("");
@@ -180,13 +180,13 @@ async function formatConfigChannelsStatusLines(
     accounts.map((account) => {
       const bits: string[] = [];
       if (typeof account.enabled === "boolean") {
-        bits.push(account.enabled ? "enabled" : "disabled");
+        bits.push(account.enabled ? "已启用" : "已禁用");
       }
       if (typeof account.configured === "boolean") {
-        bits.push(account.configured ? "configured" : "not configured");
+        bits.push(account.configured ? "已配置" : "未配置");
       }
       if (typeof account.linked === "boolean") {
-        bits.push(account.linked ? "linked" : "not linked");
+        bits.push(account.linked ? "已关联" : "未关联");
       }
       if (typeof account.mode === "string" && account.mode.length > 0) {
         bits.push(`mode:${account.mode}`);
@@ -235,7 +235,7 @@ async function formatConfigChannelsStatusLines(
 
   lines.push("");
   lines.push(
-    `Tip: ${formatDocsLink("/cli#status", "status --deep")} adds gateway health probes to status output (requires a reachable gateway).`,
+    `提示：${formatDocsLink("/cli#status", "status --deep")} 会向状态输出添加网关健康探测（需要网关可访问）。`,
   );
   return lines;
 }
@@ -245,7 +245,7 @@ export async function channelsStatusCommand(
   runtime: RuntimeEnv = defaultRuntime,
 ) {
   const timeoutMs = Number(opts.timeout ?? 10_000);
-  const statusLabel = opts.probe ? "Checking channel status (probe)…" : "Checking channel status…";
+  const statusLabel = opts.probe ? "正在检查渠道状态（探测）…" : "正在检查渠道状态…";
   const shouldLogStatus = opts.json !== true && !process.stderr.isTTY;
   if (shouldLogStatus) {
     runtime.log(statusLabel);
@@ -270,7 +270,7 @@ export async function channelsStatusCommand(
     }
     runtime.log(formatGatewayChannelsStatusLines(payload).join("\n"));
   } catch (err) {
-    runtime.error(`Gateway not reachable: ${String(err)}`);
+    runtime.error(`网关无法访问：${String(err)}`);
     const cfg = await requireValidConfig(runtime);
     if (!cfg) {
       return;

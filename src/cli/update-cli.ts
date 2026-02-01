@@ -68,45 +68,45 @@ export type UpdateWizardOptions = {
 };
 
 const STEP_LABELS: Record<string, string> = {
-  "clean check": "Working directory is clean",
-  "upstream check": "Upstream branch exists",
-  "git fetch": "Fetching latest changes",
-  "git rebase": "Rebasing onto target commit",
-  "git rev-parse @{upstream}": "Resolving upstream commit",
-  "git rev-list": "Enumerating candidate commits",
-  "git clone": "Cloning git checkout",
-  "preflight worktree": "Preparing preflight worktree",
-  "preflight cleanup": "Cleaning preflight worktree",
-  "deps install": "Installing dependencies",
-  build: "Building",
-  "ui:build": "Building UI",
-  "openclaw doctor": "Running doctor checks",
-  "git rev-parse HEAD (after)": "Verifying update",
-  "global update": "Updating via package manager",
-  "global install": "Installing global package",
+  "clean check": "工作目录干净",
+  "upstream check": "上游分支存在",
+  "git fetch": "获取最新更改",
+  "git rebase": "变基到目标提交",
+  "git rev-parse @{upstream}": "解析上游提交",
+  "git rev-list": "枚举候选提交",
+  "git clone": "克隆 git 检出",
+  "preflight worktree": "准备预检工作树",
+  "preflight cleanup": "清理预检工作树",
+  "deps install": "安装依赖",
+  build: "构建中",
+  "ui:build": "构建 UI",
+  "openclaw doctor": "运行检查程序",
+  "git rev-parse HEAD (after)": "验证更新",
+  "global update": "通过包管理器更新",
+  "global install": "安装全局包",
 };
 
 const UPDATE_QUIPS = [
-  "Leveled up! New skills unlocked. You're welcome.",
-  "Fresh code, same lobster. Miss me?",
-  "Back and better. Did you even notice I was gone?",
-  "Update complete. I learned some new tricks while I was out.",
-  "Upgraded! Now with 23% more sass.",
-  "I've evolved. Try to keep up.",
-  "New version, who dis? Oh right, still me but shinier.",
-  "Patched, polished, and ready to pinch. Let's go.",
-  "The lobster has molted. Harder shell, sharper claws.",
-  "Update done! Check the changelog or just trust me, it's good.",
-  "Reborn from the boiling waters of npm. Stronger now.",
-  "I went away and came back smarter. You should try it sometime.",
-  "Update complete. The bugs feared me, so they left.",
-  "New version installed. Old version sends its regards.",
-  "Firmware fresh. Brain wrinkles: increased.",
-  "I've seen things you wouldn't believe. Anyway, I'm updated.",
-  "Back online. The changelog is long but our friendship is longer.",
-  "Upgraded! Peter fixed stuff. Blame him if it breaks.",
-  "Molting complete. Please don't look at my soft shell phase.",
-  "Version bump! Same chaos energy, fewer crashes (probably).",
+  "升级成功！解锁新技能。不客气。",
+  "新代码，同样的龙虾。想我了吗？",
+  "回归，更强。你注意到我离开了吗？",
+  "更新完成。离开期间学了一些新技巧。",
+  "已升级！现在多了 23% 的机智。",
+  "我已经进化了。跟上吧。",
+  "新版本，哪位？哦，还是我，只是更闪亮了。",
+  "已打补丁，已打磨，准备就绪。开始吧。",
+  "龙虾已蜕皮。更硬的壳，更锋利的爪子。",
+  "更新完成！查看更新日志，或者相信我，这很好。",
+  "从 npm 的沸水中重生。现在更强了。",
+  "我离开了一段时间，回来时更聪明了。你也试试。",
+  "更新完成。bug 怕了我，所以离开了。",
+  "新版本已安装。旧版本向你问好。",
+  "固件已刷新。脑皱纹：增加。",
+  "我见过你不会相信的事情。总之，我已更新。",
+  "重新上线。更新日志很长，但我们的友谊更长。",
+  "已升级！Peter 修复了一些东西。如果出问题怪他。",
+  "蜕皮完成。请别看我软壳阶段。",
+  "版本升级！同样的混乱能量，更少的崩溃（大概）。",
 ];
 
 const MAX_LOG_CHARS = 8000;
@@ -134,7 +134,7 @@ function normalizeTag(value?: string | null): string | null {
 }
 
 function pickUpdateQuip(): string {
-  return UPDATE_QUIPS[Math.floor(Math.random() * UPDATE_QUIPS.length)] ?? "Update complete.";
+  return UPDATE_QUIPS[Math.floor(Math.random() * UPDATE_QUIPS.length)] ?? "更新完成。";
 }
 
 function normalizeVersionTag(tag: string): string | null {
@@ -288,7 +288,7 @@ async function ensureGitCheckout(params: {
     const empty = await isEmptyDir(params.dir);
     if (!empty) {
       throw new Error(
-        `OPENCLAW_GIT_DIR points at a non-git directory: ${params.dir}. Set OPENCLAW_GIT_DIR to an empty folder or an openclaw checkout.`,
+        `OPENCLAW_GIT_DIR 指向非 git 目录：${params.dir}。将 OPENCLAW_GIT_DIR 设置为空文件夹或 openclaw 检出目录。`,
       );
     }
     return await runUpdateStep({
@@ -301,7 +301,7 @@ async function ensureGitCheckout(params: {
   }
 
   if (!(await isCorePackage(params.dir))) {
-    throw new Error(`OPENCLAW_GIT_DIR does not look like a core checkout: ${params.dir}.`);
+    throw new Error(`OPENCLAW_GIT_DIR 看起来不像核心检出目录：${params.dir}。`);
   }
 
   return null;
@@ -339,8 +339,8 @@ function formatGitStatusLine(params: {
   const branch = params.branch && params.branch !== "HEAD" ? params.branch : null;
   const tag = params.tag;
   const parts = [
-    branch ?? (tag ? "detached" : "git"),
-    tag ? `tag ${tag}` : null,
+    branch ?? (tag ? "分离头" : "git"),
+    tag ? `标签 ${tag}` : null,
     shortSha ? `@ ${shortSha}` : null,
   ].filter(Boolean);
   return parts.join(" · ");
@@ -349,7 +349,7 @@ function formatGitStatusLine(params: {
 export async function updateStatusCommand(opts: UpdateStatusOptions): Promise<void> {
   const timeoutMs = opts.timeout ? Number.parseInt(opts.timeout, 10) * 1000 : undefined;
   if (timeoutMs !== undefined && (Number.isNaN(timeoutMs) || timeoutMs <= 0)) {
-    defaultRuntime.error("--timeout must be a positive integer (seconds)");
+    defaultRuntime.error("--timeout 必须是正整数（秒）");
     defaultRuntime.exit(1);
     return;
   }
@@ -421,23 +421,23 @@ export async function updateStatusCommand(opts: UpdateStatusOptions): Promise<vo
         ? update.packageManager
         : "unknown";
   const rows = [
-    { Item: "Install", Value: installLabel },
-    { Item: "Channel", Value: channelLabel },
+    { Item: "安装", Value: installLabel },
+    { Item: "渠道", Value: channelLabel },
     ...(gitLabel ? [{ Item: "Git", Value: gitLabel }] : []),
     {
-      Item: "Update",
-      Value: updateAvailability.available ? theme.warn(`available · ${updateLine}`) : updateLine,
+      Item: "更新",
+      Value: updateAvailability.available ? theme.warn(`可用 · ${updateLine}`) : updateLine,
     },
   ];
 
-  defaultRuntime.log(theme.heading("OpenClaw update status"));
+  defaultRuntime.log(theme.heading("OpenClaw 更新状态"));
   defaultRuntime.log("");
   defaultRuntime.log(
     renderTable({
       width: tableWidth,
       columns: [
-        { key: "Item", header: "Item", minWidth: 10 },
-        { key: "Value", header: "Value", flex: true, minWidth: 24 },
+        { key: "Item", header: "项目", minWidth: 10 },
+        { key: "Value", header: "值", flex: true, minWidth: 24 },
       ],
       rows,
     }).trimEnd(),
@@ -548,9 +548,7 @@ function printResult(result: UpdateRunResult, opts: PrintResultOptions) {
     result.status === "ok" ? theme.success : result.status === "skipped" ? theme.warn : theme.error;
 
   defaultRuntime.log("");
-  defaultRuntime.log(
-    `${theme.heading("Update Result:")} ${statusColor(result.status.toUpperCase())}`,
-  );
+  defaultRuntime.log(`${theme.heading("更新结果：")} ${statusColor(result.status.toUpperCase())}`);
   if (result.root) {
     defaultRuntime.log(`  Root: ${theme.muted(result.root)}`);
   }
@@ -569,7 +567,7 @@ function printResult(result: UpdateRunResult, opts: PrintResultOptions) {
 
   if (!opts.hideSteps && result.steps.length > 0) {
     defaultRuntime.log("");
-    defaultRuntime.log(theme.heading("Steps:"));
+    defaultRuntime.log(theme.heading("步骤："));
     for (const step of result.steps) {
       const status = formatStepStatus(step.exitCode);
       const duration = theme.muted(`(${formatDuration(step.durationMs)})`);
@@ -587,7 +585,7 @@ function printResult(result: UpdateRunResult, opts: PrintResultOptions) {
   }
 
   defaultRuntime.log("");
-  defaultRuntime.log(`Total time: ${theme.muted(formatDuration(result.durationMs))}`);
+  defaultRuntime.log(`总耗时：${theme.muted(formatDuration(result.durationMs))}`);
 }
 
 export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
@@ -597,7 +595,7 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
   const shouldRestart = opts.restart !== false;
 
   if (timeoutMs !== undefined && (Number.isNaN(timeoutMs) || timeoutMs <= 0)) {
-    defaultRuntime.error("--timeout must be a positive integer (seconds)");
+    defaultRuntime.error("--timeout 必须是正整数（秒）");
     defaultRuntime.exit(1);
     return;
   }
@@ -624,13 +622,13 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
 
   const requestedChannel = normalizeUpdateChannel(opts.channel);
   if (opts.channel && !requestedChannel) {
-    defaultRuntime.error(`--channel must be "stable", "beta", or "dev" (got "${opts.channel}")`);
+    defaultRuntime.error(`--channel 必须是 "stable"、"beta" 或 "dev"（得到 "${opts.channel}"）`);
     defaultRuntime.exit(1);
     return;
   }
   if (opts.channel && !configSnapshot.valid) {
     const issues = configSnapshot.issues.map((issue) => `- ${issue.path}: ${issue.message}`);
-    defaultRuntime.error(["Config is invalid; cannot set update channel.", ...issues].join("\n"));
+    defaultRuntime.error(["配置无效；无法设置更新渠道。", ...issues].join("\n"));
     defaultRuntime.exit(1);
     return;
   }
@@ -665,33 +663,28 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     if (needsConfirm && !opts.yes) {
       if (!process.stdin.isTTY || opts.json) {
         defaultRuntime.error(
-          [
-            "Downgrade confirmation required.",
-            "Downgrading can break configuration. Re-run in a TTY to confirm.",
-          ].join("\n"),
+          ["降级需要确认。", "降级可能会破坏配置。在 TTY 中重新运行以确认。"].join("\n"),
         );
         defaultRuntime.exit(1);
         return;
       }
 
-      const targetLabel = targetVersion ?? `${tag} (unknown)`;
-      const message = `Downgrading from ${currentVersion} to ${targetLabel} can break configuration. Continue?`;
+      const targetLabel = targetVersion ?? `${tag}（未知）`;
+      const message = `从 ${currentVersion} 降级到 ${targetLabel} 可能会破坏配置。继续吗？`;
       const ok = await confirm({
         message: stylePromptMessage(message),
         initialValue: false,
       });
       if (isCancel(ok) || !ok) {
         if (!opts.json) {
-          defaultRuntime.log(theme.muted("Update cancelled."));
+          defaultRuntime.log(theme.muted("更新已取消。"));
         }
         defaultRuntime.exit(0);
         return;
       }
     }
   } else if (opts.tag && !opts.json) {
-    defaultRuntime.log(
-      theme.muted("Note: --tag applies to npm installs only; git updates ignore it."),
-    );
+    defaultRuntime.log(theme.muted("注意：--tag 仅适用于 npm 安装；git 更新会忽略它。"));
   }
 
   if (requestedChannel && configSnapshot.valid) {
@@ -705,14 +698,14 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     await writeConfigFile(next);
     activeConfig = next;
     if (!opts.json) {
-      defaultRuntime.log(theme.muted(`Update channel set to ${requestedChannel}.`));
+      defaultRuntime.log(theme.muted(`更新渠道已设置为 ${requestedChannel}。`));
     }
   }
 
   const showProgress = !opts.json && process.stdout.isTTY;
 
   if (!opts.json) {
-    defaultRuntime.log(theme.heading("Updating OpenClaw..."));
+    defaultRuntime.log(theme.heading("正在更新 OpenClaw..."));
     defaultRuntime.log("");
   }
 
@@ -841,21 +834,17 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
 
   if (result.status === "skipped") {
     if (result.reason === "dirty") {
-      defaultRuntime.log(
-        theme.warn(
-          "Skipped: working directory has uncommitted changes. Commit or stash them first.",
-        ),
-      );
+      defaultRuntime.log(theme.warn("已跳过：工作目录有未提交的更改。请先提交或暂存它们。"));
     }
     if (result.reason === "not-git-install") {
       defaultRuntime.log(
         theme.warn(
-          `Skipped: this OpenClaw install isn't a git checkout, and the package manager couldn't be detected. Update via your package manager, then run \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\` and \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\`.`,
+          `已跳过：此 OpenClaw 安装不是 git 检出，且无法检测包管理器。通过包管理器更新，然后运行 \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\` 和 \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\`。`,
         ),
       );
       defaultRuntime.log(
         theme.muted(
-          `Examples: \`${replaceCliName("npm i -g openclaw@latest", CLI_NAME)}\` or \`${replaceCliName("pnpm add -g openclaw@latest", CLI_NAME)}\``,
+          `示例：\`${replaceCliName("npm i -g openclaw@latest", CLI_NAME)}\` 或 \`${replaceCliName("pnpm add -g openclaw@latest", CLI_NAME)}\``,
         ),
       );
     }
@@ -874,7 +863,7 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
 
     if (!opts.json) {
       defaultRuntime.log("");
-      defaultRuntime.log(theme.heading("Updating plugins..."));
+      defaultRuntime.log(theme.heading("正在更新插件..."));
     }
 
     const syncResult = await syncPluginsForUpdateChannel({
@@ -899,21 +888,19 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     if (!opts.json) {
       const summarizeList = (list: string[]) => {
         if (list.length <= 6) {
-          return list.join(", ");
+          return list.join("、");
         }
-        return `${list.slice(0, 6).join(", ")} +${list.length - 6} more`;
+        return `${list.slice(0, 6).join("、")} +${list.length - 6} 更多`;
       };
 
       if (syncResult.summary.switchedToBundled.length > 0) {
         defaultRuntime.log(
-          theme.muted(
-            `Switched to bundled plugins: ${summarizeList(syncResult.summary.switchedToBundled)}.`,
-          ),
+          theme.muted(`已切换到内置插件：${summarizeList(syncResult.summary.switchedToBundled)}。`),
         );
       }
       if (syncResult.summary.switchedToNpm.length > 0) {
         defaultRuntime.log(
-          theme.muted(`Restored npm plugins: ${summarizeList(syncResult.summary.switchedToNpm)}.`),
+          theme.muted(`已恢复 npm 插件：${summarizeList(syncResult.summary.switchedToNpm)}。`),
         );
       }
       for (const warning of syncResult.summary.warnings) {
@@ -929,16 +916,16 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
       const skipped = npmResult.outcomes.filter((entry) => entry.status === "skipped").length;
 
       if (npmResult.outcomes.length === 0) {
-        defaultRuntime.log(theme.muted("No plugin updates needed."));
+        defaultRuntime.log(theme.muted("无需更新插件。"));
       } else {
-        const parts = [`${updated} updated`, `${unchanged} unchanged`];
+        const parts = [`${updated} 已更新`, `${unchanged} 未更改`];
         if (failed > 0) {
-          parts.push(`${failed} failed`);
+          parts.push(`${failed} 失败`);
         }
         if (skipped > 0) {
-          parts.push(`${skipped} skipped`);
+          parts.push(`${skipped} 跳过`);
         }
-        defaultRuntime.log(theme.muted(`npm plugins: ${parts.join(", ")}.`));
+        defaultRuntime.log(theme.muted(`npm 插件：${parts.join("、")}。`));
       }
 
       for (const outcome of npmResult.outcomes) {
@@ -949,20 +936,20 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
       }
     }
   } else if (!opts.json) {
-    defaultRuntime.log(theme.warn("Skipping plugin updates: config is invalid."));
+    defaultRuntime.log(theme.warn("跳过插件更新：配置无效。"));
   }
 
   // Restart service if requested
   if (shouldRestart) {
     if (!opts.json) {
       defaultRuntime.log("");
-      defaultRuntime.log(theme.heading("Restarting service..."));
+      defaultRuntime.log(theme.heading("正在重启服务..."));
     }
     try {
       const { runDaemonRestart } = await import("./daemon-cli.js");
       const restarted = await runDaemonRestart();
       if (!opts.json && restarted) {
-        defaultRuntime.log(theme.success("Daemon restarted successfully."));
+        defaultRuntime.log(theme.success("服务重启成功。"));
         defaultRuntime.log("");
         process.env.OPENCLAW_UPDATE_IN_PROGRESS = "1";
         try {
@@ -972,17 +959,17 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
             nonInteractive: !interactiveDoctor,
           });
         } catch (err) {
-          defaultRuntime.log(theme.warn(`Doctor failed: ${String(err)}`));
+          defaultRuntime.log(theme.warn(`检查失败：${String(err)}`));
         } finally {
           delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
         }
       }
     } catch (err) {
       if (!opts.json) {
-        defaultRuntime.log(theme.warn(`Daemon restart failed: ${String(err)}`));
+        defaultRuntime.log(theme.warn(`服务重启失败：${String(err)}`));
         defaultRuntime.log(
           theme.muted(
-            `You may need to restart the service manually: ${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}`,
+            `您可能需要手动重启服务：${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}`,
           ),
         );
       }
@@ -992,13 +979,13 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     if (result.mode === "npm" || result.mode === "pnpm") {
       defaultRuntime.log(
         theme.muted(
-          `Tip: Run \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\`, then \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
+          `提示：运行 \`${replaceCliName(formatCliCommand("openclaw doctor"), CLI_NAME)}\`，然后运行 \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` 以将更新应用到运行中的网关。`,
         ),
       );
     } else {
       defaultRuntime.log(
         theme.muted(
-          `Tip: Run \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` to apply updates to a running gateway.`,
+          `提示：运行 \`${replaceCliName(formatCliCommand("openclaw gateway restart"), CLI_NAME)}\` 以将更新应用到运行中的网关。`,
         ),
       );
     }
@@ -1012,7 +999,7 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
 export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promise<void> {
   if (!process.stdin.isTTY) {
     defaultRuntime.error(
-      "Update wizard requires a TTY. Use `openclaw update --channel <stable|beta|dev>` instead.",
+      "更新向导需要 TTY。请改用 `openclaw update --channel <stable|beta|dev>`。",
     );
     defaultRuntime.exit(1);
     return;
@@ -1020,7 +1007,7 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
 
   const timeoutMs = opts.timeout ? Number.parseInt(opts.timeout, 10) * 1000 : undefined;
   if (timeoutMs !== undefined && (Number.isNaN(timeoutMs) || timeoutMs <= 0)) {
-    defaultRuntime.error("--timeout must be a positive integer (seconds)");
+    defaultRuntime.error("--timeout 必须是正整数（秒）");
     defaultRuntime.exit(1);
     return;
   }
@@ -1060,26 +1047,26 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
   });
 
   const pickedChannel = await selectStyled({
-    message: "Update channel",
+    message: "更新渠道",
     options: [
       {
         value: "keep",
-        label: `Keep current (${channelInfo.channel})`,
+        label: `保持当前（${channelInfo.channel}）`,
         hint: channelLabel,
       },
       {
         value: "stable",
-        label: "Stable",
-        hint: "Tagged releases (npm latest)",
+        label: "稳定版",
+        hint: "标签发布（npm latest）",
       },
       {
         value: "beta",
-        label: "Beta",
-        hint: "Prereleases (npm beta)",
+        label: "测试版",
+        hint: "预发布版本（npm beta）",
       },
       {
         value: "dev",
-        label: "Dev",
+        label: "开发版",
         hint: "Git main",
       },
     ],
@@ -1087,7 +1074,7 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
   });
 
   if (isCancel(pickedChannel)) {
-    defaultRuntime.log(theme.muted("Update cancelled."));
+    defaultRuntime.log(theme.muted("更新已取消。"));
     defaultRuntime.exit(0);
     return;
   }
@@ -1103,20 +1090,18 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
         const empty = await isEmptyDir(gitDir);
         if (!empty) {
           defaultRuntime.error(
-            `OPENCLAW_GIT_DIR points at a non-git directory: ${gitDir}. Set OPENCLAW_GIT_DIR to an empty folder or an openclaw checkout.`,
+            `OPENCLAW_GIT_DIR 指向非 git 目录：${gitDir}。将 OPENCLAW_GIT_DIR 设置为空文件夹或 openclaw 检出目录。`,
           );
           defaultRuntime.exit(1);
           return;
         }
       }
       const ok = await confirm({
-        message: stylePromptMessage(
-          `Create a git checkout at ${gitDir}? (override via OPENCLAW_GIT_DIR)`,
-        ),
+        message: stylePromptMessage(`在 ${gitDir} 创建 git 检出？（通过 OPENCLAW_GIT_DIR 覆盖）`),
         initialValue: true,
       });
       if (isCancel(ok) || !ok) {
-        defaultRuntime.log(theme.muted("Update cancelled."));
+        defaultRuntime.log(theme.muted("更新已取消。"));
         defaultRuntime.exit(0);
         return;
       }
@@ -1124,11 +1109,11 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
   }
 
   const restart = await confirm({
-    message: stylePromptMessage("Restart the gateway service after update?"),
+    message: stylePromptMessage("更新后重启网关服务？"),
     initialValue: true,
   });
   if (isCancel(restart)) {
-    defaultRuntime.log(theme.muted("Update cancelled."));
+    defaultRuntime.log(theme.muted("更新已取消。"));
     defaultRuntime.exit(0);
     return;
   }
