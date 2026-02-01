@@ -67,7 +67,7 @@ export async function doctorCommand(
 ) {
   const prompter = createDoctorPrompter({ runtime, options });
   printWizardHeader(runtime);
-  intro("OpenClaw doctor");
+  intro("OpenClaw 诊断");
 
   const root = await resolveOpenClawPackageRoot({
     moduleUrl: import.meta.url,
@@ -283,7 +283,7 @@ export async function doctorCommand(
       runtime.log(`Backup: ${shortenHomePath(backupPath)}`);
     }
   } else {
-    runtime.log(`Run "${formatCliCommand("openclaw doctor --fix")}" to apply changes.`);
+    runtime.log(`运行 "${formatCliCommand("openclaw doctor --fix")}" 以应用更改。`);
   }
 
   if (options.workspaceSuggestions !== false) {
@@ -303,5 +303,5 @@ export async function doctorCommand(
     }
   }
 
-  outro("Doctor complete.");
+  outro("诊断完成。");
 }

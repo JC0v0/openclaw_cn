@@ -369,10 +369,10 @@ export async function noteStateIntegrity(
   }
 
   if (warnings.length > 0) {
-    note(warnings.join("\n"), "State integrity");
+    note(warnings.join("\n"), "状态完整性");
   }
   if (changes.length > 0) {
-    note(changes.join("\n"), "Doctor changes");
+    note(changes.join("\n"), "诊断更改");
   }
 }
 
@@ -386,10 +386,10 @@ export function noteWorkspaceBackupTip(workspaceDir: string) {
   }
   note(
     [
-      "- Tip: back up the workspace in a private git repo (GitHub or GitLab).",
-      "- Keep ~/.openclaw out of git; it contains credentials and session history.",
-      "- Details: /concepts/agent-workspace#git-backup-recommended",
+      "- 提示：在私有 git 仓库（GitHub 或 GitLab）中备份工作区。",
+      "- 保持 ~/.openclaw 在 git 之外；它包含凭据和会话历史。",
+      "- 详情：/concepts/agent-workspace#git-backup-recommended",
     ].join("\n"),
-    "Workspace",
+    "工作区",
   );
 }
