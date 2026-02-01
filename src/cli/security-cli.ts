@@ -29,19 +29,19 @@ function formatSummary(summary: { critical: number; warn: number; info: number }
 export function registerSecurityCli(program: Command) {
   const security = program
     .command("security")
-    .description("Security tools (audit)")
+    .description("安全工具（审计）")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/security", "docs.openclaw.ai/cli/security")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/security", "docs.openclaw.ai/cli/security")}\n`,
     );
 
   security
     .command("audit")
-    .description("Audit config + local state for common security foot-guns")
-    .option("--deep", "Attempt live Gateway probe (best-effort)", false)
-    .option("--fix", "Apply safe fixes (tighten defaults + chmod state/config)", false)
-    .option("--json", "Print JSON", false)
+    .description("审计配置和本地状态，检查常见安全陷阱")
+    .option("--deep", "尝试实时网关探测（尽力而为）", false)
+    .option("--fix", "应用安全修复（收紧默认权限 + 修改状态/配置文件权限）", false)
+    .option("--json", "以 JSON 格式输出", false)
     .action(async (opts: SecurityAuditOptions) => {
       const fixResult = opts.fix ? await fixSecurityFootguns().catch((_err) => null) : null;
 

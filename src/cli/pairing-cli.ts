@@ -53,19 +53,19 @@ export function registerPairingCli(program: Command) {
   const channels = listPairingChannels();
   const pairing = program
     .command("pairing")
-    .description("Secure DM pairing (approve inbound requests)")
+    .description("安全私信配对（批准入站请求）")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/pairing", "docs.openclaw.ai/cli/pairing")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/pairing", "docs.openclaw.ai/cli/pairing")}\n`,
     );
 
   pairing
     .command("list")
-    .description("List pending pairing requests")
-    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
-    .argument("[channel]", `Channel (${channels.join(", ")})`)
-    .option("--json", "Print JSON", false)
+    .description("列出待处理的配对请求")
+    .option("--channel <channel>", `渠道 (${channels.join(", ")})`)
+    .argument("[channel]", `渠道 (${channels.join(", ")})`)
+    .option("--json", "以 JSON 格式输出", false)
     .action(async (channelArg, opts) => {
       const channelRaw = opts.channel ?? channelArg;
       if (!channelRaw) {
@@ -109,11 +109,11 @@ export function registerPairingCli(program: Command) {
 
   pairing
     .command("approve")
-    .description("Approve a pairing code and allow that sender")
-    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
-    .argument("<codeOrChannel>", "Pairing code (or channel when using 2 args)")
-    .argument("[code]", "Pairing code (when channel is passed as the 1st arg)")
-    .option("--notify", "Notify the requester on the same channel", false)
+    .description("批准配对码并允许该发送者")
+    .option("--channel <channel>", `渠道 (${channels.join(", ")})`)
+    .argument("<codeOrChannel>", "配对码（或使用 2 个参数时的渠道）")
+    .argument("[code]", "配对码（当渠道作为第 1 个参数传递时）")
+    .option("--notify", "在同一渠道上通知请求者", false)
     .action(async (codeOrChannel, code, opts) => {
       const channelRaw = opts.channel ?? codeOrChannel;
       const resolvedCode = opts.channel ? codeOrChannel : code;

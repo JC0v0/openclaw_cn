@@ -24,29 +24,29 @@ import { registerMessageThreadCommands } from "./message/register.thread.js";
 export function registerMessageCommands(program: Command, ctx: ProgramContext) {
   const message = program
     .command("message")
-    .description("Send messages and channel actions")
+    .description("发送消息和频道操作")
     .addHelpText(
       "after",
       () =>
         `
-${theme.heading("Examples:")}
+${theme.heading("示例：")}
 ${formatHelpExamples([
-  ['openclaw message send --target +15555550123 --message "Hi"', "Send a text message."],
+  ['openclaw message send --target +15555550123 --message "Hi"', "发送文本消息。"],
   [
     'openclaw message send --target +15555550123 --message "Hi" --media photo.jpg',
-    "Send a message with media.",
+    "发送带媒体的消息。",
   ],
   [
     'openclaw message poll --channel discord --target channel:123 --poll-question "Snack?" --poll-option Pizza --poll-option Sushi',
-    "Create a Discord poll.",
+    "创建 Discord 投票。",
   ],
   [
     'openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"',
-    "React to a message.",
+    "对消息做出反应。",
   ],
 ])}
 
-${theme.muted("Docs:")} ${formatDocsLink("/cli/message", "docs.openclaw.ai/cli/message")}`,
+${theme.muted("文档：")} ${formatDocsLink("/cli/message", "docs.openclaw.ai/cli/message")}`,
     )
     .action(() => {
       message.help({ error: true });

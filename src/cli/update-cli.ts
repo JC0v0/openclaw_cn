@@ -1148,52 +1148,52 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
 export function registerUpdateCli(program: Command) {
   const update = program
     .command("update")
-    .description("Update OpenClaw to the latest version")
-    .option("--json", "Output result as JSON", false)
-    .option("--no-restart", "Skip restarting the gateway service after a successful update")
-    .option("--channel <stable|beta|dev>", "Persist update channel (git + npm)")
-    .option("--tag <dist-tag|version>", "Override npm dist-tag or version for this update")
-    .option("--timeout <seconds>", "Timeout for each update step in seconds (default: 1200)")
-    .option("--yes", "Skip confirmation prompts (non-interactive)", false)
+    .description("将 OpenClaw 更新到最新版本")
+    .option("--json", "以 JSON 格式输出结果", false)
+    .option("--no-restart", "成功更新后跳过重启网关服务")
+    .option("--channel <stable|beta|dev>", "持久化更新渠道（git + npm）")
+    .option("--tag <dist-tag|version>", "覆盖此次更新的 npm 分发标签或版本")
+    .option("--timeout <seconds>", "每个更新步骤的超时时间（秒，默认：1200）")
+    .option("--yes", "跳过确认提示（非交互模式）", false)
     .addHelpText("after", () => {
       const examples = [
-        ["openclaw update", "Update a source checkout (git)"],
-        ["openclaw update --channel beta", "Switch to beta channel (git + npm)"],
-        ["openclaw update --channel dev", "Switch to dev channel (git + npm)"],
-        ["openclaw update --tag beta", "One-off update to a dist-tag or version"],
-        ["openclaw update --no-restart", "Update without restarting the service"],
-        ["openclaw update --json", "Output result as JSON"],
-        ["openclaw update --yes", "Non-interactive (accept downgrade prompts)"],
-        ["openclaw update wizard", "Interactive update wizard"],
-        ["openclaw --update", "Shorthand for openclaw update"],
+        ["openclaw update", "更新源码检出版本（git）"],
+        ["openclaw update --channel beta", "切换到 beta 渠道（git + npm）"],
+        ["openclaw update --channel dev", "切换到 dev 渠道（git + npm）"],
+        ["openclaw update --tag beta", "一次性更新到指定分发标签或版本"],
+        ["openclaw update --no-restart", "更新但不重启服务"],
+        ["openclaw update --json", "以 JSON 格式输出结果"],
+        ["openclaw update --yes", "非交互模式（接受降级提示）"],
+        ["openclaw update wizard", "交互式更新向导"],
+        ["openclaw --update", "等同于 openclaw update"],
       ] as const;
       const fmtExamples = examples
         .map(([cmd, desc]) => `  ${theme.command(cmd)} ${theme.muted(`# ${desc}`)}`)
         .join("\n");
       return `
-${theme.heading("What this does:")}
-  - Git checkouts: fetches, rebases, installs deps, builds, and runs doctor
-  - npm installs: updates via detected package manager
+${theme.heading("执行内容：")}
+  - Git 检出版本：获取最新代码、变基、安装依赖、构建并运行检查
+  - npm 安装版本：通过检测到的包管理器更新
 
-${theme.heading("Switch channels:")}
-  - Use --channel stable|beta|dev to persist the update channel in config
-  - Run openclaw update status to see the active channel and source
-  - Use --tag <dist-tag|version> for a one-off npm update without persisting
+${theme.heading("切换渠道：")}
+  - 使用 --channel stable|beta|dev 将更新渠道持久化到配置
+  - 运行 openclaw update status 查看当前渠道和来源
+  - 使用 --tag <dist-tag|version> 进行一次性 npm 更新而不持久化
 
-${theme.heading("Non-interactive:")}
-  - Use --yes to accept downgrade prompts
-  - Combine with --channel/--tag/--restart/--json/--timeout as needed
+${theme.heading("非交互模式：")}
+  - 使用 --yes 接受降级提示
+  - 根据需要与 --channel/--tag/--restart/--json/--timeout 组合使用
 
-${theme.heading("Examples:")}
+${theme.heading("示例：")}
 ${fmtExamples}
 
-${theme.heading("Notes:")}
-  - Switch channels with --channel stable|beta|dev
-  - For global installs: auto-updates via detected package manager when possible (see docs/install/updating.md)
-  - Downgrades require confirmation (can break configuration)
-  - Skips update if the working directory has uncommitted changes
+${theme.heading("注意事项：")}
+  - 使用 --channel stable|beta|dev 切换渠道
+  - 全局安装版本：尽可能通过检测到的包管理器自动更新（参见 docs/install/updating.md）
+  - 降级需要确认（可能会破坏配置）
+  - 如果工作目录有未提交的更改，则跳过更新
 
-${theme.muted("Docs:")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/update")}`;
+${theme.muted("文档：")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/update")}`;
     })
     .action(async (opts) => {
       try {
@@ -1213,11 +1213,11 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/up
 
   update
     .command("wizard")
-    .description("Interactive update wizard")
-    .option("--timeout <seconds>", "Timeout for each update step in seconds (default: 1200)")
+    .description("交互式更新向导")
+    .option("--timeout <seconds>", "每个更新步骤的超时时间（秒，默认：1200）")
     .addHelpText(
       "after",
-      `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/update")}\n`,
+      `\n${theme.muted("文档：")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/update")}\n`,
     )
     .action(async (opts) => {
       try {
@@ -1232,20 +1232,20 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/up
 
   update
     .command("status")
-    .description("Show update channel and version status")
-    .option("--json", "Output result as JSON", false)
-    .option("--timeout <seconds>", "Timeout for update checks in seconds (default: 3)")
+    .description("显示更新渠道和版本状态")
+    .option("--json", "以 JSON 格式输出结果", false)
+    .option("--timeout <seconds>", "更新检查的超时时间（秒，默认：3）")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw update status", "Show channel + version status."],
-          ["openclaw update status --json", "JSON output."],
-          ["openclaw update status --timeout 10", "Custom timeout."],
-        ])}\n\n${theme.heading("Notes:")}\n${theme.muted(
-          "- Shows current update channel (stable/beta/dev) and source",
-        )}\n${theme.muted("- Includes git tag/branch/SHA for source checkouts")}\n\n${theme.muted(
-          "Docs:",
+        `\n${theme.heading("示例：")}\n${formatHelpExamples([
+          ["openclaw update status", "显示渠道和版本状态。"],
+          ["openclaw update status --json", "JSON 格式输出。"],
+          ["openclaw update status --timeout 10", "自定义超时时间。"],
+        ])}\n\n${theme.heading("注意事项：")}\n${theme.muted(
+          "- 显示当前更新渠道（stable/beta/dev）和来源",
+        )}\n${theme.muted("- 包含源码检出的 git 标签/分支/SHA")}\n\n${theme.muted(
+          "文档：",
         )} ${formatDocsLink("/cli/update", "docs.openclaw.ai/cli/update")}`,
     )
     .action(async (opts) => {

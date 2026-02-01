@@ -20,55 +20,48 @@ import { collectOption } from "./helpers.js";
 export function registerAgentCommands(program: Command, args: { agentChannelOptions: string }) {
   program
     .command("agent")
-    .description("Run an agent turn via the Gateway (use --local for embedded)")
-    .requiredOption("-m, --message <text>", "Message body for the agent")
-    .option("-t, --to <number>", "Recipient number in E.164 used to derive the session key")
-    .option("--session-id <id>", "Use an explicit session id")
-    .option("--agent <id>", "Agent id (overrides routing bindings)")
-    .option("--thinking <level>", "Thinking level: off | minimal | low | medium | high")
-    .option("--verbose <on|off>", "Persist agent verbose level for the session")
+    .description("通过网关运行代理（使用 --local 运行嵌入式代理）")
+    .requiredOption("-m, --message <text>", "代理的消息内容")
+    .option("-t, --to <number>", "用于派生会话密钥的 E.164 接收者号码")
+    .option("--session-id <id>", "使用显式会话 ID")
+    .option("--agent <id>", "代理 ID（覆盖路由绑定）")
+    .option("--thinking <level>", "思考级别：off | minimal | low | medium | high")
+    .option("--verbose <on|off>", "为会话持久化代理详细级别")
     .option(
       "--channel <channel>",
-      `Delivery channel: ${args.agentChannelOptions} (default: ${DEFAULT_CHAT_CHANNEL})`,
+      `传递频道：${args.agentChannelOptions}（默认：${DEFAULT_CHAT_CHANNEL}）`,
     )
-    .option("--reply-to <target>", "Delivery target override (separate from session routing)")
-    .option("--reply-channel <channel>", "Delivery channel override (separate from routing)")
-    .option("--reply-account <id>", "Delivery account id override")
-    .option(
-      "--local",
-      "Run the embedded agent locally (requires model provider API keys in your shell)",
-      false,
-    )
-    .option("--deliver", "Send the agent's reply back to the selected channel", false)
-    .option("--json", "Output result as JSON", false)
-    .option(
-      "--timeout <seconds>",
-      "Override agent command timeout (seconds, default 600 or config value)",
-    )
+    .option("--reply-to <target>", "传递目标覆盖（与会话路由分离）")
+    .option("--reply-channel <channel>", "传递频道覆盖（与路由分离）")
+    .option("--reply-account <id>", "传递账户 ID 覆盖")
+    .option("--local", "在本地运行嵌入式代理（需要 shell 中的模型提供商 API 密钥）", false)
+    .option("--deliver", "将代理的回复发送回所选频道", false)
+    .option("--json", "将结果输出为 JSON", false)
+    .option("--timeout <seconds>", "覆盖代理命令超时（秒，默认 600 或配置值）")
     .addHelpText(
       "after",
       () =>
         `
-${theme.heading("Examples:")}
+${theme.heading("示例：")}
 ${formatHelpExamples([
-  ['openclaw agent --to +15555550123 --message "status update"', "Start a new session."],
-  ['openclaw agent --agent ops --message "Summarize logs"', "Use a specific agent."],
+  ['openclaw agent --to +15555550123 --message "status update"', "开始新会话。"],
+  ['openclaw agent --agent ops --message "Summarize logs"', "使用特定代理。"],
   [
     'openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium',
-    "Target a session with explicit thinking level.",
+    "以指定思考级别定位会话。",
   ],
   [
     'openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json',
-    "Enable verbose logging and JSON output.",
+    "启用详细日志和 JSON 输出。",
   ],
-  ['openclaw agent --to +15555550123 --message "Summon reply" --deliver', "Deliver reply."],
+  ['openclaw agent --to +15555550123 --message "Summon reply" --deliver', "传递回复。"],
   [
     'openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"',
-    "Send reply to a different channel/target.",
+    "将回复发送到不同的频道/目标。",
   ],
 ])}
 
-${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/agent")}`,
+${theme.muted("文档：")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/agent")}`,
     )
     .action(async (opts) => {
       const verboseLevel = typeof opts.verbose === "string" ? opts.verbose.toLowerCase() : "";
@@ -82,18 +75,18 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
 
   const agents = program
     .command("agents")
-    .description("Manage isolated agents (workspaces + auth + routing)")
+    .description("管理隔离的代理（工作区 + 认证 + 路由）")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/agents", "docs.openclaw.ai/cli/agents")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/agents", "docs.openclaw.ai/cli/agents")}\n`,
     );
 
   agents
     .command("list")
-    .description("List configured agents")
-    .option("--json", "Output JSON instead of text", false)
-    .option("--bindings", "Include routing bindings", false)
+    .description("列出已配置的代理")
+    .option("--json", "输出 JSON 而非文本", false)
+    .option("--bindings", "包含路由绑定", false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await agentsListCommand(
@@ -105,13 +98,13 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
 
   agents
     .command("add [name]")
-    .description("Add a new isolated agent")
-    .option("--workspace <dir>", "Workspace directory for the new agent")
-    .option("--model <id>", "Model id for this agent")
-    .option("--agent-dir <dir>", "Agent state directory for this agent")
-    .option("--bind <channel[:accountId]>", "Route channel binding (repeatable)", collectOption, [])
-    .option("--non-interactive", "Disable prompts; requires --workspace", false)
-    .option("--json", "Output JSON summary", false)
+    .description("添加新的隔离代理")
+    .option("--workspace <dir>", "新代理的工作区目录")
+    .option("--model <id>", "此代理的模型 ID")
+    .option("--agent-dir <dir>", "此代理的代理状态目录")
+    .option("--bind <channel[:accountId]>", "路由频道绑定（可重复）", collectOption, [])
+    .option("--non-interactive", "禁用提示；需要 --workspace", false)
+    .option("--json", "输出 JSON 摘要", false)
     .action(async (name, opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const hasFlags = hasExplicitOptions(command, [
@@ -139,31 +132,34 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
 
   agents
     .command("set-identity")
-    .description("Update an agent identity (name/theme/emoji/avatar)")
-    .option("--agent <id>", "Agent id to update")
-    .option("--workspace <dir>", "Workspace directory used to locate the agent + IDENTITY.md")
-    .option("--identity-file <path>", "Explicit IDENTITY.md path to read")
-    .option("--from-identity", "Read values from IDENTITY.md", false)
-    .option("--name <name>", "Identity name")
-    .option("--theme <theme>", "Identity theme")
-    .option("--emoji <emoji>", "Identity emoji")
-    .option("--avatar <value>", "Identity avatar (workspace path, http(s) URL, or data URI)")
-    .option("--json", "Output JSON summary", false)
+    .description("更新代理身份（名称/主题/表情符号/头像）")
+    .option("--agent <id>", "要更新的代理 ID")
+    .option("--workspace <dir>", "用于定位代理 + IDENTITY.md 的工作区目录")
+    .option("--identity-file <path>", "要读取的显式 IDENTITY.md 路径")
+    .option("--from-identity", "从 IDENTITY.md 读取值", false)
+    .option("--name <name>", "身份名称")
+    .option("--theme <theme>", "身份主题")
+    .option("--emoji <emoji>", "身份表情符号")
+    .option("--avatar <value>", "身份头像（工作区路径、http(s) URL 或 data URI）")
+    .option("--json", "输出 JSON 摘要", false)
     .addHelpText(
       "after",
       () =>
         `
-${theme.heading("Examples:")}
+${theme.heading("示例：")}
 ${formatHelpExamples([
-  ['openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"', "Set name + emoji."],
-  ["openclaw agents set-identity --agent main --avatar avatars/openclaw.png", "Set avatar path."],
+  [
+    'openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"',
+    "设置名称 + 表情符号。",
+  ],
+  ["openclaw agents set-identity --agent main --avatar avatars/openclaw.png", "设置头像路径。"],
   [
     "openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity",
-    "Load from IDENTITY.md.",
+    "从 IDENTITY.md 加载。",
   ],
   [
     "openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main",
-    "Use a specific IDENTITY.md.",
+    "使用特定的 IDENTITY.md。",
   ],
 ])}
 `,
@@ -189,9 +185,9 @@ ${formatHelpExamples([
 
   agents
     .command("delete <id>")
-    .description("Delete an agent and prune workspace/state")
-    .option("--force", "Skip confirmation", false)
-    .option("--json", "Output JSON summary", false)
+    .description("删除代理并清理工作区/状态")
+    .option("--force", "跳过确认", false)
+    .option("--json", "输出 JSON 摘要", false)
     .action(async (id, opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await agentsDeleteCommand(

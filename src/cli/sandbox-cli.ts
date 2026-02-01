@@ -14,30 +14,30 @@ type CommandOptions = Record<string, unknown>;
 
 const SANDBOX_EXAMPLES = {
   main: [
-    ["openclaw sandbox list", "List all sandbox containers."],
-    ["openclaw sandbox list --browser", "List only browser containers."],
-    ["openclaw sandbox recreate --all", "Recreate all containers."],
-    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
-    ["openclaw sandbox recreate --agent mybot", "Recreate agent containers."],
-    ["openclaw sandbox explain", "Explain effective sandbox config."],
+    ["openclaw sandbox list", "列出所有沙箱容器。"],
+    ["openclaw sandbox list --browser", "仅列出浏览器容器。"],
+    ["openclaw sandbox recreate --all", "重新创建所有容器。"],
+    ["openclaw sandbox recreate --session main", "重新创建指定会话。"],
+    ["openclaw sandbox recreate --agent mybot", "重新创建代理容器。"],
+    ["openclaw sandbox explain", "解释有效的沙箱配置。"],
   ],
   list: [
-    ["openclaw sandbox list", "List all sandbox containers."],
-    ["openclaw sandbox list --browser", "List only browser containers."],
-    ["openclaw sandbox list --json", "JSON output."],
+    ["openclaw sandbox list", "列出所有沙箱容器。"],
+    ["openclaw sandbox list --browser", "仅列出浏览器容器。"],
+    ["openclaw sandbox list --json", "JSON 格式输出。"],
   ],
   recreate: [
-    ["openclaw sandbox recreate --all", "Recreate all containers."],
-    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
-    ["openclaw sandbox recreate --agent mybot", "Recreate a specific agent (includes sub-agents)."],
-    ["openclaw sandbox recreate --browser --all", "Recreate only browser containers."],
-    ["openclaw sandbox recreate --all --force", "Skip confirmation."],
+    ["openclaw sandbox recreate --all", "重新创建所有容器。"],
+    ["openclaw sandbox recreate --session main", "重新创建指定会话。"],
+    ["openclaw sandbox recreate --agent mybot", "重新创建指定代理（包括子代理）。"],
+    ["openclaw sandbox recreate --browser --all", "仅重新创建浏览器容器。"],
+    ["openclaw sandbox recreate --all --force", "跳过确认提示。"],
   ],
   explain: [
-    ["openclaw sandbox explain", "Show effective sandbox config."],
-    ["openclaw sandbox explain --session agent:main:main", "Explain a specific session."],
-    ["openclaw sandbox explain --agent work", "Explain an agent sandbox."],
-    ["openclaw sandbox explain --json", "JSON output."],
+    ["openclaw sandbox explain", "显示有效的沙箱配置。"],
+    ["openclaw sandbox explain --session agent:main:main", "解释指定会话的配置。"],
+    ["openclaw sandbox explain --agent work", "解释代理沙箱。"],
+    ["openclaw sandbox explain --json", "JSON 格式输出。"],
   ],
 } as const;
 
@@ -59,15 +59,15 @@ function createRunner(
 export function registerSandboxCli(program: Command) {
   const sandbox = program
     .command("sandbox")
-    .description("Manage sandbox containers (Docker-based agent isolation)")
+    .description("管理沙箱容器（基于 Docker 的代理隔离）")
     .addHelpText(
       "after",
-      () => `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.main)}\n`,
+      () => `\n${theme.heading("示例：")}\n${formatHelpExamples(SANDBOX_EXAMPLES.main)}\n`,
     )
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/sandbox", "docs.openclaw.ai/cli/sandbox")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/sandbox", "docs.openclaw.ai/cli/sandbox")}\n`,
     )
     .action(() => {
       sandbox.help({ error: true });
@@ -77,19 +77,19 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("list")
-    .description("List sandbox containers and their status")
-    .option("--json", "Output result as JSON", false)
-    .option("--browser", "List browser containers only", false)
+    .description("列出沙箱容器及其状态")
+    .option("--json", "以 JSON 格式输出结果", false)
+    .option("--browser", "仅列出浏览器容器", false)
     .addHelpText(
       "after",
       () =>
-        `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.list)}\n\n${theme.heading(
-          "Output includes:",
-        )}\n${theme.muted("- Container name and status (running/stopped)")}\n${theme.muted(
-          "- Docker image and whether it matches current config",
-        )}\n${theme.muted("- Age (time since creation)")}\n${theme.muted(
-          "- Idle time (time since last use)",
-        )}\n${theme.muted("- Associated session/agent ID")}`,
+        `\n${theme.heading("示例：")}\n${formatHelpExamples(SANDBOX_EXAMPLES.list)}\n\n${theme.heading(
+          "输出内容包括：",
+        )}\n${theme.muted("- 容器名称和状态（运行中/已停止）")}\n${theme.muted(
+          "- Docker 镜像以及是否与当前配置匹配",
+        )}\n${theme.muted("- 存在时间（创建以来的时间）")}\n${theme.muted(
+          "- 空闲时间（上次使用以来的时间）",
+        )}\n${theme.muted("- 关联的会话/代理 ID")}`,
     )
     .action(
       createRunner((opts) =>
@@ -107,30 +107,28 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("recreate")
-    .description("Remove containers to force recreation with updated config")
-    .option("--all", "Recreate all sandbox containers", false)
-    .option("--session <key>", "Recreate container for specific session")
-    .option("--agent <id>", "Recreate containers for specific agent")
-    .option("--browser", "Only recreate browser containers", false)
-    .option("--force", "Skip confirmation prompt", false)
+    .description("删除容器以使用更新后的配置强制重新创建")
+    .option("--all", "重新创建所有沙箱容器", false)
+    .option("--session <key>", "为指定会话重新创建容器")
+    .option("--agent <id>", "为指定代理重新创建容器")
+    .option("--browser", "仅重新创建浏览器容器", false)
+    .option("--force", "跳过确认提示", false)
     .addHelpText(
       "after",
       () =>
-        `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.recreate)}\n\n${theme.heading(
-          "Why use this?",
+        `\n${theme.heading("示例：")}\n${formatHelpExamples(SANDBOX_EXAMPLES.recreate)}\n\n${theme.heading(
+          "为什么使用此命令？",
         )}\n${theme.muted(
-          "After updating Docker images or sandbox configuration, existing containers continue running with old settings.",
+          "更新 Docker 镜像或沙箱配置后，现有容器会继续使用旧设置运行。",
         )}\n${theme.muted(
-          "This command removes them so they'll be recreated automatically with current config when next needed.",
-        )}\n\n${theme.heading("Filter options:")}\n${theme.muted(
-          "  --all          Remove all sandbox containers",
-        )}\n${theme.muted(
-          "  --session      Remove container for specific session key",
-        )}\n${theme.muted(
-          "  --agent        Remove containers for agent (includes agent:id:* variants)",
-        )}\n\n${theme.heading("Modifiers:")}\n${theme.muted(
-          "  --browser      Only affect browser containers (not regular sandbox)",
-        )}\n${theme.muted("  --force        Skip confirmation prompt")}`,
+          "此命令会删除这些容器，以便在下次需要时使用当前配置自动重新创建。",
+        )}\n\n${theme.heading("筛选选项：")}\n${theme.muted(
+          "  --all          删除所有沙箱容器",
+        )}\n${theme.muted("  --session      删除指定会话密钥的容器")}\n${theme.muted(
+          "  --agent        删除代理的容器（包括 agent:id:* 变体）",
+        )}\n\n${theme.heading("修饰符：")}\n${theme.muted(
+          "  --browser      仅影响浏览器容器（不影响常规沙箱）",
+        )}\n${theme.muted("  --force        跳过确认提示")}`,
     )
     .action(
       createRunner((opts) =>
@@ -151,13 +149,13 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("explain")
-    .description("Explain effective sandbox/tool policy for a session/agent")
-    .option("--session <key>", "Session key to inspect (defaults to agent main)")
-    .option("--agent <id>", "Agent id to inspect (defaults to derived agent)")
-    .option("--json", "Output result as JSON", false)
+    .description("解释会话/代理的有效沙箱/工具策略")
+    .option("--session <key>", "要检查的会话密钥（默认为 agent main）")
+    .option("--agent <id>", "要检查的代理 ID（默认为派生代理）")
+    .option("--json", "以 JSON 格式输出结果", false)
     .addHelpText(
       "after",
-      () => `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.explain)}\n`,
+      () => `\n${theme.heading("示例：")}\n${formatHelpExamples(SANDBOX_EXAMPLES.explain)}\n`,
     )
     .action(
       createRunner((opts) =>

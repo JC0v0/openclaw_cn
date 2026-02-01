@@ -113,12 +113,12 @@ function formatTokenSummary(tokens: DeviceTokenSummary[] | undefined) {
 }
 
 export function registerDevicesCli(program: Command) {
-  const devices = program.command("devices").description("Device pairing and auth tokens");
+  const devices = program.command("devices").description("设备配对和认证令牌");
 
   devicesCallOpts(
     devices
       .command("list")
-      .description("List pending and paired devices")
+      .description("列出待处理和已配对的设备")
       .action(async (opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.list", opts, {});
         const list = parseDevicePairingList(result);
@@ -187,8 +187,8 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("approve")
-      .description("Approve a pending device pairing request")
-      .argument("<requestId>", "Pending request id")
+      .description("批准待处理的设备配对请求")
+      .argument("<requestId>", "待处理请求的 ID")
       .action(async (requestId: string, opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.approve", opts, { requestId });
         if (opts.json) {
@@ -203,8 +203,8 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("reject")
-      .description("Reject a pending device pairing request")
-      .argument("<requestId>", "Pending request id")
+      .description("拒绝待处理的设备配对请求")
+      .argument("<requestId>", "待处理请求的 ID")
       .action(async (requestId: string, opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.reject", opts, { requestId });
         if (opts.json) {
@@ -219,10 +219,10 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("rotate")
-      .description("Rotate a device token for a role")
-      .requiredOption("--device <id>", "Device id")
-      .requiredOption("--role <role>", "Role name")
-      .option("--scope <scope...>", "Scopes to attach to the token (repeatable)")
+      .description("轮换角色的设备令牌")
+      .requiredOption("--device <id>", "设备 ID")
+      .requiredOption("--role <role>", "角色名称")
+      .option("--scope <scope...>", "附加到令牌的范围（可重复）")
       .action(async (opts: DevicesRpcOpts) => {
         const deviceId = String(opts.device ?? "").trim();
         const role = String(opts.role ?? "").trim();
@@ -243,9 +243,9 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("revoke")
-      .description("Revoke a device token for a role")
-      .requiredOption("--device <id>", "Device id")
-      .requiredOption("--role <role>", "Role name")
+      .description("撤销角色的设备令牌")
+      .requiredOption("--device <id>", "设备 ID")
+      .requiredOption("--role <role>", "角色名称")
       .action(async (opts: DevicesRpcOpts) => {
         const deviceId = String(opts.device ?? "").trim();
         const role = String(opts.role ?? "").trim();

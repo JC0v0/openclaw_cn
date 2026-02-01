@@ -64,15 +64,21 @@ export async function setupSkills(
 
   await prompter.note(
     [
-      `Eligible: ${eligible.length}`,
-      `Missing requirements: ${missing.length}`,
-      `Blocked by allowlist: ${blocked.length}`,
+      `Eligible: ${eligible.length}`.replace("Eligible:", "符合条件："),
+      `Missing requirements: ${missing.length}`.replace("Missing requirements:", "缺少依赖："),
+      `Blocked by allowlist: ${blocked.length}`.replace(
+        "Blocked by allowlist:",
+        "被允许列表阻止：",
+      ),
     ].join("\n"),
-    "Skills status",
+    "Skills status".replace("Skills status", "技能状态"),
   );
 
   const shouldConfigure = await prompter.confirm({
-    message: "Configure skills now? (recommended)",
+    message: "Configure skills now? (recommended)".replace(
+      "Configure skills now? (recommended)",
+      "现在配置技能？（推荐）",
+    ),
     initialValue: true,
   });
   if (!shouldConfigure) {
@@ -82,28 +88,40 @@ export async function setupSkills(
   if (needsBrewPrompt) {
     await prompter.note(
       [
-        "Many skill dependencies are shipped via Homebrew.",
-        "Without brew, you'll need to build from source or download releases manually.",
+        "Many skill dependencies are shipped via Homebrew.".replace(
+          "Many skill dependencies are shipped via Homebrew.",
+          "许多技能依赖项通过 Homebrew 提供。",
+        ),
+        "Without brew, you'll need to build from source or download releases manually.".replace(
+          "Without brew, you'll need to build from source or download releases manually.",
+          "没有 brew，您需要从源代码构建或手动下载发布版本。",
+        ),
       ].join("\n"),
-      "Homebrew recommended",
+      "Homebrew recommended".replace("Homebrew recommended", "推荐安装 Homebrew"),
     );
     const showBrewInstall = await prompter.confirm({
-      message: "Show Homebrew install command?",
+      message: "Show Homebrew install command?".replace(
+        "Show Homebrew install command?",
+        "显示 Homebrew 安装命令？",
+      ),
       initialValue: true,
     });
     if (showBrewInstall) {
       await prompter.note(
         [
-          "Run:",
+          "Run:".replace("Run:", "运行："),
           '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
         ].join("\n"),
-        "Homebrew install",
+        "Homebrew install".replace("Homebrew install", "Homebrew 安装"),
       );
     }
   }
 
   const nodeManager = (await prompter.select({
-    message: "Preferred node manager for skill installs",
+    message: "Preferred node manager for skill installs".replace(
+      "Preferred node manager for skill installs",
+      "技能安装的首选 Node 包管理器",
+    ),
     options: resolveNodeManagerOptions(),
   })) as "npm" | "pnpm" | "bun";
 
@@ -123,12 +141,18 @@ export async function setupSkills(
   );
   if (installable.length > 0) {
     const toInstall = await prompter.multiselect({
-      message: "Install missing skill dependencies",
+      message: "Install missing skill dependencies".replace(
+        "Install missing skill dependencies",
+        "安装缺少的技能依赖",
+      ),
       options: [
         {
           value: "__skip__",
-          label: "Skip for now",
-          hint: "Continue without installing dependencies",
+          label: "Skip for now".replace("Skip for now", "跳过"),
+          hint: "Continue without installing dependencies".replace(
+            "Continue without installing dependencies",
+            "继续而不安装依赖",
+          ),
         },
         ...installable.map((skill) => ({
           value: skill.name,
@@ -148,7 +172,7 @@ export async function setupSkills(
       if (!installId) {
         continue;
       }
-      const spin = prompter.progress(`Installing ${name}…`);
+      const spin = prompter.progress(`Installing ${name}…`.replace("Installing", "正在安装"));
       const result = await installSkill({
         workspaceDir,
         skillName: target.name,
@@ -156,20 +180,28 @@ export async function setupSkills(
         config: next,
       });
       if (result.ok) {
-        spin.stop(`Installed ${name}`);
+        spin.stop(`Installed ${name}`.replace("Installed", "已安装"));
       } else {
         const code = result.code == null ? "" : ` (exit ${result.code})`;
         const detail = summarizeInstallFailure(result.message);
-        spin.stop(`Install failed: ${name}${code}${detail ? ` — ${detail}` : ""}`);
+        spin.stop(
+          `Install failed: ${name}${code}${detail ? ` — ${detail}` : ""}`.replace(
+            "Install failed:",
+            "安装失败：",
+          ),
+        );
         if (result.stderr) {
           runtime.log(result.stderr.trim());
         } else if (result.stdout) {
           runtime.log(result.stdout.trim());
         }
         runtime.log(
-          `Tip: run \`${formatCliCommand("openclaw doctor")}\` to review skills + requirements.`,
+          `Tip: run \`${formatCliCommand("openclaw doctor")}\` to review skills + requirements.`.replace(
+            "Tip: run",
+            "提示：运行",
+          ),
         );
-        runtime.log("Docs: https://docs.openclaw.ai/skills");
+        runtime.log("Docs: https://docs.openclaw.ai/skills".replace("Docs:", "文档："));
       }
     }
   }
@@ -179,7 +211,9 @@ export async function setupSkills(
       continue;
     }
     const wantsKey = await prompter.confirm({
-      message: `Set ${skill.primaryEnv} for ${skill.name}?`,
+      message: `Set ${skill.primaryEnv} for ${skill.name}?`
+        .replace("Set", "设置")
+        .replace("for", "用于"),
       initialValue: false,
     });
     if (!wantsKey) {
@@ -187,8 +221,8 @@ export async function setupSkills(
     }
     const apiKey = String(
       await prompter.text({
-        message: `Enter ${skill.primaryEnv}`,
-        validate: (value) => (value?.trim() ? undefined : "Required"),
+        message: `Enter ${skill.primaryEnv}`.replace("Enter", "输入"),
+        validate: (value) => (value?.trim() ? undefined : "Required".replace("Required", "必填")),
       }),
     );
     next = upsertSkillEntry(next, skill.skillKey, { apiKey: apiKey.trim() });

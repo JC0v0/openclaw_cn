@@ -437,19 +437,19 @@ export async function disableHook(hookName: string): Promise<void> {
 export function registerHooksCli(program: Command): void {
   const hooks = program
     .command("hooks")
-    .description("Manage internal agent hooks")
+    .description("管理内部代理钩子")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/hooks", "docs.openclaw.ai/cli/hooks")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/hooks", "docs.openclaw.ai/cli/hooks")}\n`,
     );
 
   hooks
     .command("list")
-    .description("List all hooks")
-    .option("--eligible", "Show only eligible hooks", false)
-    .option("--json", "Output as JSON", false)
-    .option("-v, --verbose", "Show more details including missing requirements", false)
+    .description("列出所有钩子")
+    .option("--eligible", "仅显示符合条件的钩子", false)
+    .option("--json", "以 JSON 格式输出", false)
+    .option("-v, --verbose", "显示更多详细信息，包括缺失的要求", false)
     .action(async (opts) => {
       try {
         const config = loadConfig();
@@ -465,8 +465,8 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("info <name>")
-    .description("Show detailed information about a hook")
-    .option("--json", "Output as JSON", false)
+    .description("显示钩子的详细信息")
+    .option("--json", "以 JSON 格式输出", false)
     .action(async (name, opts) => {
       try {
         const config = loadConfig();
@@ -482,8 +482,8 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("check")
-    .description("Check hooks eligibility status")
-    .option("--json", "Output as JSON", false)
+    .description("检查钩子资格状态")
+    .option("--json", "以 JSON 格式输出", false)
     .action(async (opts) => {
       try {
         const config = loadConfig();
@@ -499,7 +499,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("enable <name>")
-    .description("Enable a hook")
+    .description("启用钩子")
     .action(async (name) => {
       try {
         await enableHook(name);
@@ -513,7 +513,7 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("disable <name>")
-    .description("Disable a hook")
+    .description("禁用钩子")
     .action(async (name) => {
       try {
         await disableHook(name);
@@ -527,9 +527,9 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("install")
-    .description("Install a hook pack (path, archive, or npm spec)")
-    .argument("<path-or-spec>", "Path to a hook pack or npm package spec")
-    .option("-l, --link", "Link a local path instead of copying", false)
+    .description("安装钩子包（路径、归档或 npm 规格）")
+    .argument("<path-or-spec>", "钩子包的路径或 npm 包规格")
+    .option("-l, --link", "链接本地路径而不是复制", false)
     .action(async (raw: string, opts: { link?: boolean }) => {
       const resolved = resolveUserPath(raw);
       const cfg = loadConfig();
@@ -739,10 +739,10 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("update")
-    .description("Update installed hooks (npm installs only)")
-    .argument("[id]", "Hook pack id (omit with --all)")
-    .option("--all", "Update all tracked hooks", false)
-    .option("--dry-run", "Show what would change without writing", false)
+    .description("更新已安装的钩子（仅限 npm 安装）")
+    .argument("[id]", "钩子包 ID（使用 --all 时省略）")
+    .option("--all", "更新所有已跟踪的钩子", false)
+    .option("--dry-run", "显示将要更改的内容但不实际写入", false)
     .action(async (id: string | undefined, opts: HooksUpdateOptions) => {
       const cfg = loadConfig();
       const installs = cfg.hooks?.internal?.installs ?? {};

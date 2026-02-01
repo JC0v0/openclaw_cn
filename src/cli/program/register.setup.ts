@@ -10,21 +10,21 @@ import { hasExplicitOptions } from "../command-options.js";
 export function registerSetupCommand(program: Command) {
   program
     .command("setup")
-    .description("Initialize ~/.openclaw/openclaw.json and the agent workspace")
+    .description("初始化 ~/.openclaw/openclaw.json 和代理工作区")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/setup", "docs.openclaw.ai/cli/setup")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/setup", "docs.openclaw.ai/cli/setup")}\n`,
     )
     .option(
       "--workspace <dir>",
-      "Agent workspace directory (default: ~/.openclaw/workspace; stored as agents.defaults.workspace)",
+      "代理工作区目录（默认：~/.openclaw/workspace；存储为 agents.defaults.workspace）",
     )
-    .option("--wizard", "Run the interactive onboarding wizard", false)
-    .option("--non-interactive", "Run the wizard without prompts", false)
-    .option("--mode <mode>", "Wizard mode: local|remote")
-    .option("--remote-url <url>", "Remote Gateway WebSocket URL")
-    .option("--remote-token <token>", "Remote Gateway token (optional)")
+    .option("--wizard", "运行交互式入门向导", false)
+    .option("--non-interactive", "无提示运行向导", false)
+    .option("--mode <mode>", "向导模式：local|remote")
+    .option("--remote-url <url>", "远程网关 WebSocket URL")
+    .option("--remote-token <token>", "远程网关令牌（可选）")
     .action(async (opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const hasWizardFlags = hasExplicitOptions(command, [

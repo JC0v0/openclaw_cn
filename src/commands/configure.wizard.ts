@@ -51,13 +51,18 @@ async function promptConfigureSection(
 ): Promise<ConfigureSectionChoice> {
   return guardCancel(
     await select<ConfigureSectionChoice>({
-      message: "Select sections to configure",
+      message: "Select sections to configure".replace(
+        "Select sections to configure",
+        "选择要配置的部分",
+      ),
       options: [
         ...CONFIGURE_SECTION_OPTIONS,
         {
           value: "__continue",
-          label: "Continue",
-          hint: hasSelection ? "Done" : "Skip for now",
+          label: "Continue".replace("Continue", "继续"),
+          hint: hasSelection
+            ? "Done".replace("Done", "完成")
+            : "Skip for now".replace("Skip for now", "跳过"),
         },
       ],
       initialValue: CONFIGURE_SECTION_OPTIONS[0]?.value,
@@ -69,17 +74,23 @@ async function promptConfigureSection(
 async function promptChannelMode(runtime: RuntimeEnv): Promise<ChannelsWizardMode> {
   return guardCancel(
     await select({
-      message: "Channels",
+      message: "Channels".replace("Channels", "频道"),
       options: [
         {
           value: "configure",
-          label: "Configure/link",
-          hint: "Add/update channels; disable unselected accounts",
+          label: "Configure/link".replace("Configure/link", "配置/连接"),
+          hint: "Add/update channels; disable unselected accounts".replace(
+            "Add/update channels; disable unselected accounts",
+            "添加/更新频道；禁用未选择的账号",
+          ),
         },
         {
           value: "remove",
-          label: "Remove channel config",
-          hint: "Delete channel tokens/settings from openclaw.json",
+          label: "Remove channel config".replace("Remove channel config", "移除频道配置"),
+          hint: "Delete channel tokens/settings from openclaw.json".replace(
+            "Delete channel tokens/settings from openclaw.json",
+            "从 openclaw.json 中删除频道令牌/设置",
+          ),
         },
       ],
       initialValue: "configure",
@@ -98,16 +109,25 @@ async function promptWebToolsConfig(
 
   note(
     [
-      "Web search lets your agent look things up online using the `web_search` tool.",
-      "It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).",
-      "Docs: https://docs.openclaw.ai/tools/web",
+      "Web search lets your agent look things up online using the `web_search` tool.".replace(
+        "Web search lets your agent look things up online using the `web_search` tool.",
+        "网络搜索让您的代理可以使用 `web_search` 工具在线查找信息。",
+      ),
+      "It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).".replace(
+        "It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).",
+        "它需要 Brave Search API 密钥（您可以将其存储在配置中或在网关环境中设置 BRAVE_API_KEY）。",
+      ),
+      "Docs: https://docs.openclaw.ai/tools/web".replace("Docs:", "文档："),
     ].join("\n"),
-    "Web search",
+    "Web search".replace("Web search", "网络搜索"),
   );
 
   const enableSearch = guardCancel(
     await confirm({
-      message: "Enable web_search (Brave Search)?",
+      message: "Enable web_search (Brave Search)?".replace(
+        "Enable web_search (Brave Search)?",
+        "启用 web_search（Brave Search）？",
+      ),
       initialValue: existingSearch?.enabled ?? hasSearchKey,
     }),
     runtime,
@@ -122,9 +142,20 @@ async function promptWebToolsConfig(
     const keyInput = guardCancel(
       await text({
         message: hasSearchKey
-          ? "Brave Search API key (leave blank to keep current or use BRAVE_API_KEY)"
-          : "Brave Search API key (paste it here; leave blank to use BRAVE_API_KEY)",
-        placeholder: hasSearchKey ? "Leave blank to keep current" : "BSA...",
+          ? "Brave Search API key (leave blank to keep current or use BRAVE_API_KEY)".replace(
+              "Brave Search API key (leave blank to keep current or use BRAVE_API_KEY)",
+              "Brave Search API 密钥（留空以保持当前设置或使用 BRAVE_API_KEY）",
+            )
+          : "Brave Search API key (paste it here; leave blank to use BRAVE_API_KEY)".replace(
+              "Brave Search API key (paste it here; leave blank to use BRAVE_API_KEY)",
+              "Brave Search API 密钥（粘贴到此处；留空以使用 BRAVE_API_KEY）",
+            ),
+        placeholder: hasSearchKey
+          ? "Leave blank to keep current".replace(
+              "Leave blank to keep current",
+              "留空以保持当前设置",
+            )
+          : "BSA...",
       }),
       runtime,
     );
@@ -134,18 +165,27 @@ async function promptWebToolsConfig(
     } else if (!hasSearchKey) {
       note(
         [
-          "No key stored yet, so web_search will stay unavailable.",
-          "Store a key here or set BRAVE_API_KEY in the Gateway environment.",
-          "Docs: https://docs.openclaw.ai/tools/web",
+          "No key stored yet, so web_search will stay unavailable.".replace(
+            "No key stored yet, so web_search will stay unavailable.",
+            "尚未存储密钥，因此 web_search 将保持不可用状态。",
+          ),
+          "Store a key here or set BRAVE_API_KEY in the Gateway environment.".replace(
+            "Store a key here or set BRAVE_API_KEY in the Gateway environment.",
+            "在此处存储密钥或在网关环境中设置 BRAVE_API_KEY。",
+          ),
+          "Docs: https://docs.openclaw.ai/tools/web".replace("Docs:", "文档："),
         ].join("\n"),
-        "Web search",
+        "Web search".replace("Web search", "网络搜索"),
       );
     }
   }
 
   const enableFetch = guardCancel(
     await confirm({
-      message: "Enable web_fetch (keyless HTTP fetch)?",
+      message: "Enable web_fetch (keyless HTTP fetch)?".replace(
+        "Enable web_fetch (keyless HTTP fetch)?",
+        "启用 web_fetch（无密钥 HTTP 获取）？",
+      ),
       initialValue: existingFetch?.enabled ?? true,
     }),
     runtime,
@@ -182,21 +222,25 @@ export async function runConfigureWizard(
     const baseConfig: OpenClawConfig = snapshot.valid ? snapshot.config : {};
 
     if (snapshot.exists) {
-      const title = snapshot.valid ? "Existing config detected" : "Invalid config";
+      const title = snapshot.valid
+        ? "Existing config detected".replace("Existing config detected", "检测到现有配置")
+        : "Invalid config".replace("Invalid config", "无效配置");
       note(summarizeExistingConfig(baseConfig), title);
       if (!snapshot.valid && snapshot.issues.length > 0) {
         note(
           [
             ...snapshot.issues.map((iss) => `- ${iss.path}: ${iss.message}`),
             "",
-            "Docs: https://docs.openclaw.ai/gateway/configuration",
+            "Docs: https://docs.openclaw.ai/gateway/configuration".replace("Docs:", "文档："),
           ].join("\n"),
-          "Config issues",
+          "Config issues".replace("Config issues", "配置问题"),
         );
       }
       if (!snapshot.valid) {
         outro(
-          `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run configure.`,
+          `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run configure.`
+            .replace("Config invalid. Run", "配置无效。运行")
+            .replace("to repair it, then re-run configure.", "来修复它，然后重新运行配置。"),
         );
         runtime.exit(1);
         return;
@@ -219,23 +263,32 @@ export async function runConfigureWizard(
 
     const mode = guardCancel(
       await select({
-        message: "Where will the Gateway run?",
+        message: "Where will the Gateway run?".replace(
+          "Where will the Gateway run?",
+          "网关将在哪里运行？",
+        ),
         options: [
           {
             value: "local",
-            label: "Local (this machine)",
+            label: "Local (this machine)".replace("Local (this machine)", "本地（本机）"),
             hint: localProbe.ok
-              ? `Gateway reachable (${localUrl})`
-              : `No gateway detected (${localUrl})`,
+              ? `Gateway reachable (${localUrl})`.replace("Gateway reachable", "网关可达")
+              : `No gateway detected (${localUrl})`.replace("No gateway detected", "未检测到网关"),
           },
           {
             value: "remote",
-            label: "Remote (info-only)",
+            label: "Remote (info-only)".replace("Remote (info-only)", "远程（仅信息）"),
             hint: !remoteUrl
-              ? "No remote URL configured yet"
+              ? "No remote URL configured yet".replace(
+                  "No remote URL configured yet",
+                  "尚未配置远程 URL",
+                )
               : remoteProbe?.ok
-                ? `Gateway reachable (${remoteUrl})`
-                : `Configured but unreachable (${remoteUrl})`,
+                ? `Gateway reachable (${remoteUrl})`.replace("Gateway reachable", "网关可达")
+                : `Configured but unreachable (${remoteUrl})`.replace(
+                    "Configured but unreachable",
+                    "已配置但无法访问",
+                  ),
           },
         ],
       }),
@@ -250,7 +303,7 @@ export async function runConfigureWizard(
       });
       await writeConfigFile(remoteConfig);
       logConfigUpdated(runtime);
-      outro("Remote gateway configured.");
+      outro("Remote gateway configured.".replace("Remote gateway configured.", "远程网关已配置。"));
       return;
     }
 
@@ -288,14 +341,14 @@ export async function runConfigureWizard(
     if (opts.sections) {
       const selected = opts.sections;
       if (!selected || selected.length === 0) {
-        outro("No changes selected.");
+        outro("No changes selected.".replace("No changes selected.", "未选择任何更改。"));
         return;
       }
 
       if (selected.includes("workspace")) {
         const workspaceInput = guardCancel(
           await text({
-            message: "Workspace directory",
+            message: "Workspace directory".replace("Workspace directory", "工作区目录"),
             initialValue: workspaceDir,
           }),
           runtime,
@@ -355,9 +408,15 @@ export async function runConfigureWizard(
         if (!selected.includes("gateway")) {
           const portInput = guardCancel(
             await text({
-              message: "Gateway port for service install",
+              message: "Gateway port for service install".replace(
+                "Gateway port for service install",
+                "服务安装的网关端口",
+              ),
               initialValue: String(gatewayPort),
-              validate: (value) => (Number.isFinite(Number(value)) ? undefined : "Invalid port"),
+              validate: (value) =>
+                Number.isFinite(Number(value))
+                  ? undefined
+                  : "Invalid port".replace("Invalid port", "无效端口"),
             }),
             runtime,
           );
@@ -392,11 +451,11 @@ export async function runConfigureWizard(
           runtime.error(formatHealthCheckFailure(err));
           note(
             [
-              "Docs:",
+              "Docs:".replace("Docs:", "文档："),
               "https://docs.openclaw.ai/gateway/health",
               "https://docs.openclaw.ai/gateway/troubleshooting",
             ].join("\n"),
-            "Health check help",
+            "Health check help".replace("Health check help", "健康检查帮助"),
           );
         }
       }
@@ -414,7 +473,7 @@ export async function runConfigureWizard(
         if (choice === "workspace") {
           const workspaceInput = guardCancel(
             await text({
-              message: "Workspace directory",
+              message: "Workspace directory".replace("Workspace directory", "工作区目录"),
               initialValue: workspaceDir,
             }),
             runtime,
@@ -479,9 +538,15 @@ export async function runConfigureWizard(
           if (!didConfigureGateway) {
             const portInput = guardCancel(
               await text({
-                message: "Gateway port for service install",
+                message: "Gateway port for service install".replace(
+                  "Gateway port for service install",
+                  "服务安装的网关端口",
+                ),
                 initialValue: String(gatewayPort),
-                validate: (value) => (Number.isFinite(Number(value)) ? undefined : "Invalid port"),
+                validate: (value) =>
+                  Number.isFinite(Number(value))
+                    ? undefined
+                    : "Invalid port".replace("Invalid port", "无效端口"),
               }),
               runtime,
             );
@@ -519,11 +584,11 @@ export async function runConfigureWizard(
             runtime.error(formatHealthCheckFailure(err));
             note(
               [
-                "Docs:",
+                "Docs:".replace("Docs:", "文档："),
                 "https://docs.openclaw.ai/gateway/health",
                 "https://docs.openclaw.ai/gateway/troubleshooting",
               ].join("\n"),
-              "Health check help",
+              "Health check help".replace("Health check help", "健康检查帮助"),
             );
           }
         }
@@ -532,10 +597,15 @@ export async function runConfigureWizard(
       if (!ranSection) {
         if (didSetGatewayMode) {
           await persistConfig();
-          outro("Gateway mode set to local.");
+          outro(
+            "Gateway mode set to local.".replace(
+              "Gateway mode set to local.",
+              "网关模式已设置为本地。",
+            ),
+          );
           return;
         }
-        outro("No changes selected.");
+        outro("No changes selected.".replace("No changes selected.", "未选择任何更改。"));
         return;
       }
     }
@@ -571,20 +641,23 @@ export async function runConfigureWizard(
       });
     }
     const gatewayStatusLine = gatewayProbe.ok
-      ? "Gateway: reachable"
-      : `Gateway: not detected${gatewayProbe.detail ? ` (${gatewayProbe.detail})` : ""}`;
+      ? "Gateway: reachable".replace("Gateway: reachable", "网关：可达")
+      : `Gateway: not detected${gatewayProbe.detail ? ` (${gatewayProbe.detail})` : ""}`.replace(
+          "Gateway: not detected",
+          "网关：未检测到",
+        );
 
     note(
       [
         `Web UI: ${links.httpUrl}`,
-        `Gateway WS: ${links.wsUrl}`,
+        `Gateway WS: ${links.wsUrl}`.replace("Gateway WS:", "网关 WS："),
         gatewayStatusLine,
-        "Docs: https://docs.openclaw.ai/web/control-ui",
+        "Docs: https://docs.openclaw.ai/web/control-ui".replace("Docs:", "文档："),
       ].join("\n"),
-      "Control UI",
+      "Control UI".replace("Control UI", "控制界面"),
     );
 
-    outro("Configure complete.");
+    outro("Configure complete.".replace("Configure complete.", "配置完成。"));
   } catch (err) {
     if (err instanceof WizardCancelledError) {
       runtime.exit(0);

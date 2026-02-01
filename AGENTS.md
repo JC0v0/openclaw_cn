@@ -52,6 +52,9 @@
 - Type-check/build: `pnpm build`
 - Lint/format: `pnpm lint` (oxlint), `pnpm format` (oxfmt)
 - Tests: `pnpm test` (vitest); coverage: `pnpm test:coverage`
+- Run single test file: `vitest run <path-to-test.test.ts>` or `pnpm test <path-to-test.test.ts>`
+- Watch mode: `pnpm test:watch`
+- Web UI dev: `pnpm ui:dev` (serves at localhost:5173); build: `pnpm ui:build`
 
 ## Coding Style & Naming Conventions
 
@@ -176,3 +179,11 @@
 - Publish: `npm publish --access public --otp="<otp>"` (run from the package dir).
 - Verify without local npmrc side effects: `npm view <pkg> version --userconfig "$(mktemp)"`.
 - Kill the tmux session after publish.
+
+## Mobile App Development
+
+- iOS: `pnpm ios:open` (generate and open Xcode), `pnpm ios:run` (build and run on simulator), `pnpm ios:build` (build only)
+- Android: `pnpm android:run` (build, install, and launch on connected device or emulator)
+- iOS Team ID lookup: `security find-identity -p codesigning -v` → use Apple Development (…) TEAMID
+- Before using simulators: check for connected real devices first and prefer them
+

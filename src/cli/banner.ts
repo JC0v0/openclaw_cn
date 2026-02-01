@@ -36,7 +36,7 @@ const hasVersionFlag = (argv: string[]) =>
 
 export function formatCliBannerLine(version: string, options: BannerOptions = {}): string {
   const commit = options.commit ?? resolveCommitHash({ env: options.env });
-  const commitLabel = commit ?? "unknown";
+  const commitLabel = commit ?? "未知";
   const tagline = pickTagline(options);
   const rich = options.richTty ?? isRich();
   const title = "🦞 OpenClaw";

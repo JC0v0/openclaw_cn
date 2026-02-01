@@ -21,18 +21,18 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (opts.nonInteractive && (authChoice === "claude-cli" || authChoice === "codex-cli")) {
     runtime.error(
       [
-        `Auth choice "${authChoice}" is deprecated.`,
-        'Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".',
+        `身份验证选项 "${authChoice}" 已被弃用。`,
+        '请使用 "--auth-choice token" (Anthropic setup-token) 或 "--auth-choice openai-codex"。',
       ].join("\n"),
     );
     runtime.exit(1);
     return;
   }
   if (authChoice === "claude-cli") {
-    runtime.log('Auth choice "claude-cli" is deprecated; using setup-token flow instead.');
+    runtime.log('身份验证选项 "claude-cli" 已被弃用；将使用 setup-token 流程代替。');
   }
   if (authChoice === "codex-cli") {
-    runtime.log('Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.');
+    runtime.log('身份验证选项 "codex-cli" 已被弃用；将使用 OpenAI Codex OAuth 代替。');
   }
   const flow = opts.flow === "manual" ? ("advanced" as const) : opts.flow;
   const normalizedOpts =
@@ -43,9 +43,9 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (normalizedOpts.nonInteractive && normalizedOpts.acceptRisk !== true) {
     runtime.error(
       [
-        "Non-interactive onboarding requires explicit risk acknowledgement.",
-        "Read: https://docs.openclaw.ai/security",
-        `Re-run with: ${formatCliCommand("openclaw onboard --non-interactive --accept-risk ...")}`,
+        "非交互式入职需要明确确认风险。",
+        "请阅读：https://docs.openclaw.ai/security",
+        `重新运行：${formatCliCommand("openclaw onboard --non-interactive --accept-risk ...")}`,
       ].join("\n"),
     );
     runtime.exit(1);
@@ -63,9 +63,9 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (process.platform === "win32") {
     runtime.log(
       [
-        "Windows detected.",
-        "WSL2 is strongly recommended; native Windows is untested and more problematic.",
-        "Guide: https://docs.openclaw.ai/windows",
+        "检测到 Windows 系统。",
+        "强烈建议使用 WSL2；原生 Windows 未经测试且问题更多。",
+        "指南：https://docs.openclaw.ai/windows",
       ].join("\n"),
     );
   }

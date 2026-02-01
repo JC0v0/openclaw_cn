@@ -8,19 +8,20 @@ import { parseTimeoutMs } from "./parse-timeout.js";
 export function registerTuiCli(program: Command) {
   program
     .command("tui")
-    .description("Open a terminal UI connected to the Gateway")
-    .option("--url <url>", "Gateway WebSocket URL (defaults to gateway.remote.url when configured)")
-    .option("--token <token>", "Gateway token (if required)")
-    .option("--password <password>", "Gateway password (if required)")
-    .option("--session <key>", 'Session key (default: "main", or "global" when scope is global)')
-    .option("--deliver", "Deliver assistant replies", false)
-    .option("--thinking <level>", "Thinking level override")
-    .option("--message <text>", "Send an initial message after connecting")
-    .option("--timeout-ms <ms>", "Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)")
-    .option("--history-limit <n>", "History entries to load", "200")
+    .description("打开连接到网关的终端界面")
+    .option("--url <url>", "网关 WebSocket URL（默认使用 gateway.remote.url 配置）")
+    .option("--token <token>", "网关令牌（如果需要）")
+    .option("--password <password>", "网关密码（如果需要）")
+    .option("--session <key>", '会话密钥（默认："main"，全局作用域时为 "global"）')
+    .option("--deliver", "传递助手回复", false)
+    .option("--thinking <level>", "思考级别覆盖")
+    .option("--message <text>", "连接后发送初始消息")
+    .option("--timeout-ms <ms>", "代理超时时间（毫秒，默认使用 agents.defaults.timeoutSeconds）")
+    .option("--history-limit <n>", "要加载的历史记录条数", "200")
     .addHelpText(
       "after",
-      () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/tui", "docs.openclaw.ai/cli/tui")}\n`,
+      () =>
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/tui", "docs.openclaw.ai/cli/tui")}\n`,
     )
     .action(async (opts) => {
       try {

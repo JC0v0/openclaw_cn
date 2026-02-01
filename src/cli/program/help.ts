@@ -8,25 +8,22 @@ import { replaceCliName, resolveCliName } from "../cli-name.js";
 const CLI_NAME = resolveCliName();
 
 const EXAMPLES = [
-  [
-    "openclaw channels login --verbose",
-    "Link personal WhatsApp Web and show QR + connection logs.",
-  ],
+  ["openclaw channels login --verbose", "关联个人 WhatsApp Web 并显示 QR + 连接日志。"],
   [
     'openclaw message send --target +15555550123 --message "Hi" --json',
-    "Send via your web session and print JSON result.",
+    "通过您的 Web 会话发送并打印 JSON 结果。",
   ],
-  ["openclaw gateway --port 18789", "Run the WebSocket Gateway locally."],
-  ["openclaw --dev gateway", "Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001."],
-  ["openclaw gateway --force", "Kill anything bound to the default gateway port, then start it."],
-  ["openclaw gateway ...", "Gateway control via WebSocket."],
+  ["openclaw gateway --port 18789", "在本地运行 WebSocket 网关。"],
+  ["openclaw --dev gateway", "在 ws://127.0.0.1:19001 上运行开发网关（隔离状态/配置）。"],
+  ["openclaw gateway --force", "终止绑定到默认网关端口的任何内容，然后启动它。"],
+  ["openclaw gateway ...", "通过 WebSocket 进行网关控制。"],
   [
     'openclaw agent --to +15555550123 --message "Run summary" --deliver',
-    "Talk directly to the agent using the Gateway; optionally send the WhatsApp reply.",
+    "使用网关直接与代理对话；可选择发送 WhatsApp 回复。",
   ],
   [
     'openclaw message send --channel telegram --target @mychat --message "Hi"',
-    "Send via your Telegram bot.",
+    "通过您的 Telegram 机器人发送。",
   ],
 ] as const;
 
@@ -37,14 +34,14 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
     .version(ctx.programVersion)
     .option(
       "--dev",
-      "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)",
+      "开发配置文件：将状态隔离在 ~/.openclaw-dev 下，默认网关端口 19001，并转移派生端口（浏览器/canvas）",
     )
     .option(
       "--profile <name>",
-      "Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)",
+      "使用命名配置文件（将 OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH 隔离在 ~/.openclaw-<name> 下）",
     );
 
-  program.option("--no-color", "Disable ANSI colors", false);
+  program.option("--no-color", "禁用 ANSI 颜色", false);
 
   program.configureHelp({
     optionTerm: (option) => theme.option(option.flags),
@@ -54,9 +51,11 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
   program.configureOutput({
     writeOut: (str) => {
       const colored = str
-        .replace(/^Usage:/gm, theme.heading("Usage:"))
-        .replace(/^Options:/gm, theme.heading("Options:"))
-        .replace(/^Commands:/gm, theme.heading("Commands:"));
+        .replace(/^Usage:/gm, theme.heading("用法："))
+        .replace(/^Options:/gm, theme.heading("选项："))
+        .replace(/^Commands:/gm, theme.heading("命令："))
+        .replace(/output the version number/g, "输出版本号")
+        .replace(/display help for command/g, "显示命令帮助");
       process.stdout.write(colored);
     },
     writeErr: (str) => process.stderr.write(str),
@@ -90,6 +89,6 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
       return "";
     }
     const docs = formatDocsLink("/cli", "docs.openclaw.ai/cli");
-    return `\n${theme.heading("Examples:")}\n${fmtExamples}\n\n${theme.muted("Docs:")} ${docs}\n`;
+    return `\n${theme.heading("示例：")}\n${fmtExamples}\n\n${theme.muted("文档：")} ${docs}\n`;
   });
 }

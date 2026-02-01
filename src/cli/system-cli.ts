@@ -22,20 +22,20 @@ const normalizeWakeMode = (raw: unknown) => {
 export function registerSystemCli(program: Command) {
   const system = program
     .command("system")
-    .description("System tools (events, heartbeat, presence)")
+    .description("系统工具（事件、心跳、在线状态）")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/system", "docs.openclaw.ai/cli/system")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/system", "docs.openclaw.ai/cli/system")}\n`,
     );
 
   addGatewayClientOptions(
     system
       .command("event")
-      .description("Enqueue a system event and optionally trigger a heartbeat")
-      .requiredOption("--text <text>", "System event text")
-      .option("--mode <mode>", "Wake mode (now|next-heartbeat)", "next-heartbeat")
-      .option("--json", "Output JSON", false),
+      .description("将系统事件加入队列并可选择触发心跳")
+      .requiredOption("--text <text>", "系统事件文本")
+      .option("--mode <mode>", "唤醒模式（now|next-heartbeat）", "next-heartbeat")
+      .option("--json", "输出 JSON 格式", false),
   ).action(async (opts: SystemEventOpts) => {
     try {
       const text = typeof opts.text === "string" ? opts.text.trim() : "";
@@ -55,13 +55,13 @@ export function registerSystemCli(program: Command) {
     }
   });
 
-  const heartbeat = system.command("heartbeat").description("Heartbeat controls");
+  const heartbeat = system.command("heartbeat").description("心跳控制");
 
   addGatewayClientOptions(
     heartbeat
       .command("last")
-      .description("Show the last heartbeat event")
-      .option("--json", "Output JSON", false),
+      .description("显示最后的心跳事件")
+      .option("--json", "输出 JSON 格式", false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli("last-heartbeat", opts, undefined, {
@@ -75,10 +75,7 @@ export function registerSystemCli(program: Command) {
   });
 
   addGatewayClientOptions(
-    heartbeat
-      .command("enable")
-      .description("Enable heartbeats")
-      .option("--json", "Output JSON", false),
+    heartbeat.command("enable").description("启用心跳").option("--json", "输出 JSON 格式", false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli(
@@ -95,10 +92,7 @@ export function registerSystemCli(program: Command) {
   });
 
   addGatewayClientOptions(
-    heartbeat
-      .command("disable")
-      .description("Disable heartbeats")
-      .option("--json", "Output JSON", false),
+    heartbeat.command("disable").description("禁用心跳").option("--json", "输出 JSON 格式", false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli(
@@ -117,8 +111,8 @@ export function registerSystemCli(program: Command) {
   addGatewayClientOptions(
     system
       .command("presence")
-      .description("List system presence entries")
-      .option("--json", "Output JSON", false),
+      .description("列出系统在线状态条目")
+      .option("--json", "输出 JSON 格式", false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli("system-presence", opts, undefined, {

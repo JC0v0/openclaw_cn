@@ -184,18 +184,18 @@ function emitGatewayError(
 export function registerLogsCli(program: Command) {
   const logs = program
     .command("logs")
-    .description("Tail gateway file logs via RPC")
-    .option("--limit <n>", "Max lines to return", "200")
-    .option("--max-bytes <n>", "Max bytes to read", "250000")
-    .option("--follow", "Follow log output", false)
-    .option("--interval <ms>", "Polling interval in ms", "1000")
-    .option("--json", "Emit JSON log lines", false)
-    .option("--plain", "Plain text output (no ANSI styling)", false)
-    .option("--no-color", "Disable ANSI colors")
+    .description("通过 RPC 跟踪网关文件日志")
+    .option("--limit <n>", "最多返回的行数", "200")
+    .option("--max-bytes <n>", "最多读取的字节数", "250000")
+    .option("--follow", "持续跟踪日志输出", false)
+    .option("--interval <ms>", "轮询间隔（毫秒）", "1000")
+    .option("--json", "以 JSON 格式输出日志", false)
+    .option("--plain", "纯文本输出（无 ANSI 样式）", false)
+    .option("--no-color", "禁用 ANSI 颜色")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/logs", "docs.openclaw.ai/cli/logs")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/logs", "docs.openclaw.ai/cli/logs")}\n`,
     );
 
   addGatewayClientOptions(logs);

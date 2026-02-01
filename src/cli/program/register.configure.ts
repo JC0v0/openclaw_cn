@@ -12,15 +12,15 @@ import { runCommandWithRuntime } from "../cli-utils.js";
 export function registerConfigureCommand(program: Command) {
   program
     .command("configure")
-    .description("Interactive prompt to set up credentials, devices, and agent defaults")
+    .description("交互式提示，用于设置凭据、设备和代理默认值")
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/configure", "docs.openclaw.ai/cli/configure")}\n`,
+        `\n${theme.muted("文档：")} ${formatDocsLink("/cli/configure", "docs.openclaw.ai/cli/configure")}\n`,
     )
     .option(
       "--section <section>",
-      `Configuration sections (repeatable). Options: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}`,
+      `配置部分（可重复）。选项：${CONFIGURE_WIZARD_SECTIONS.join(", ")}`,
       (value: string, previous: string[]) => [...previous, value],
       [] as string[],
     )
@@ -39,7 +39,7 @@ export function registerConfigureCommand(program: Command) {
         const invalid = sections.filter((s) => !CONFIGURE_WIZARD_SECTIONS.includes(s as never));
         if (invalid.length > 0) {
           defaultRuntime.error(
-            `Invalid --section: ${invalid.join(", ")}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}.`,
+            `无效的 --section：${invalid.join(", ")}。预期其中之一：${CONFIGURE_WIZARD_SECTIONS.join(", ")}。`,
           );
           defaultRuntime.exit(1);
           return;

@@ -54,19 +54,19 @@ async function promptConfiguredAction(params: {
   const { prompter, label, supportsDisable, supportsDelete } = params;
   const updateOption: WizardSelectOption<ConfiguredChannelAction> = {
     value: "update",
-    label: "Modify settings",
+    label: "修改设置",
   };
   const disableOption: WizardSelectOption<ConfiguredChannelAction> = {
     value: "disable",
-    label: "Disable (keeps config)",
+    label: "禁用（保留配置）",
   };
   const deleteOption: WizardSelectOption<ConfiguredChannelAction> = {
     value: "delete",
-    label: "Delete config",
+    label: "删除配置",
   };
   const skipOption: WizardSelectOption<ConfiguredChannelAction> = {
     value: "skip",
-    label: "Skip (leave as-is)",
+    label: "跳过（保持原样）",
   };
   const options: Array<WizardSelectOption<ConfiguredChannelAction>> = [
     updateOption,
@@ -75,7 +75,10 @@ async function promptConfiguredAction(params: {
     skipOption,
   ];
   return await prompter.select({
-    message: `${label} already configured. What do you want to do?`,
+    message: `${label} already configured. What do you want to do?`.replace(
+      "already configured. What do you want to do?",
+      "已配置。您想要做什么？",
+    ),
     options,
     initialValue: "update",
   });
@@ -101,7 +104,7 @@ async function promptRemovalAccountId(params: {
     message: `${label} account`,
     options: accountIds.map((accountId) => ({
       value: accountId,
-      label: formatAccountLabel(accountId),
+      label: accountId === DEFAULT_ACCOUNT_ID ? "默认（主要）" : accountId,
     })),
     initialValue: defaultAccountId,
   });
@@ -133,20 +136,20 @@ async function collectChannelStatus(params: {
     .filter((meta) => !statusByChannel.has(meta.id))
     .map((meta) => {
       const configured = isChannelConfigured(params.cfg, meta.id);
-      const statusLabel = configured ? "configured (plugin disabled)" : "not configured";
+      const statusLabel = configured ? "已配置（插件已禁用）" : "未配置";
       return {
         channel: meta.id,
         configured,
         statusLines: [`${meta.label}: ${statusLabel}`],
-        selectionHint: configured ? "configured · plugin disabled" : "not configured",
+        selectionHint: configured ? "已配置 · 插件已禁用" : "未配置",
         quickstartScore: 0,
       };
     });
   const catalogStatuses = catalogEntries.map((entry) => ({
     channel: entry.id,
     configured: false,
-    statusLines: [`${entry.meta.label}: install plugin to enable`],
-    selectionHint: "plugin · install",
+    statusLines: [`${entry.meta.label}: 安装插件以启用`],
+    selectionHint: "插件 · 安装",
     quickstartScore: 0,
   }));
   const combinedStatuses = [...statusEntries, ...fallbackStatuses, ...catalogStatuses];
@@ -172,7 +175,7 @@ export async function noteChannelStatus(params: {
     accountOverrides: params.accountOverrides ?? {},
   });
   if (statusLines.length > 0) {
-    await params.prompter.note(statusLines.join("\n"), "Channel status");
+    await params.prompter.note(statusLines.join("\n"), "频道状态");
   }
 }
 
@@ -191,15 +194,27 @@ async function noteChannelPrimer(
   );
   await prompter.note(
     [
-      "DM security: default is pairing; unknown DMs get a pairing code.",
-      `Approve with: ${formatCliCommand("openclaw pairing approve <channel> <code>")}`,
-      'Public DMs require dmPolicy="open" + allowFrom=["*"].',
-      'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
-      `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`,
+      "DM security: default is pairing; unknown DMs get a pairing code.".replace(
+        "DM security: default is pairing; unknown DMs get a pairing code.",
+        "私信安全：默认为配对；未知私信会收到配对码。",
+      ),
+      `Approve with: ${formatCliCommand("openclaw pairing approve <channel> <code>")}`.replace(
+        "Approve with:",
+        "使用以下命令批准：",
+      ),
+      'Public DMs require dmPolicy="open" + allowFrom=["*"].'.replace(
+        'Public DMs require dmPolicy="open" + allowFrom=["*"].',
+        '公开私信需要 dmPolicy="open" + allowFrom=["*"]。',
+      ),
+      'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.'.replace(
+        'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
+        '多用户私信：设置 session.dmScope="per-channel-peer"（或多账号频道使用 "per-account-channel-peer"）来隔离会话。',
+      ),
+      `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`.replace("Docs:", "文档："),
       "",
       ...channelLines,
     ].join("\n"),
-    "How channels work",
+    "How channels work".replace("How channels work", "频道工作原理"),
   );
 }
 
@@ -233,7 +248,10 @@ async function maybeConfigureDmPolicies(params: {
   }
 
   const wants = await prompter.confirm({
-    message: "Configure DM access policies now? (default: pairing)",
+    message: "Configure DM access policies now? (default: pairing)".replace(
+      "Configure DM access policies now? (default: pairing)",
+      "现在配置私信访问策略？（默认：配对）",
+    ),
     initialValue: false,
   });
   if (!wants) {
@@ -244,22 +262,55 @@ async function maybeConfigureDmPolicies(params: {
   const selectPolicy = async (policy: ChannelOnboardingDmPolicy) => {
     await prompter.note(
       [
-        "Default: pairing (unknown DMs get a pairing code).",
-        `Approve: ${formatCliCommand(`openclaw pairing approve ${policy.channel} <code>`)}`,
-        `Allowlist DMs: ${policy.policyKey}="allowlist" + ${policy.allowFromKey} entries.`,
-        `Public DMs: ${policy.policyKey}="open" + ${policy.allowFromKey} includes "*".`,
-        'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
-        `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`,
+        "Default: pairing (unknown DMs get a pairing code).".replace(
+          "Default: pairing (unknown DMs get a pairing code).",
+          "默认：配对（未知私信会收到配对码）。",
+        ),
+        `Approve: ${formatCliCommand(`openclaw pairing approve ${policy.channel} <code>`)}`.replace(
+          "Approve:",
+          "批准：",
+        ),
+        `Allowlist DMs: ${policy.policyKey}="allowlist" + ${policy.allowFromKey} entries.`.replace(
+          "Allowlist DMs:",
+          "允许列表私信：",
+        ),
+        `Public DMs: ${policy.policyKey}="open" + ${policy.allowFromKey} includes "*".`.replace(
+          "Public DMs:",
+          "公开私信：",
+        ),
+        'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.'.replace(
+          'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
+          '多用户私信：设置 session.dmScope="per-channel-peer"（或多账号频道使用 "per-account-channel-peer"）来隔离会话。',
+        ),
+        `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`.replace("Docs:", "文档："),
       ].join("\n"),
-      `${policy.label} DM access`,
+      `${policy.label} DM access`.replace("DM access", "私信访问"),
     );
     return (await prompter.select({
-      message: `${policy.label} DM policy`,
+      message: `${policy.label} DM policy`.replace("DM policy", "私信策略"),
       options: [
-        { value: "pairing", label: "Pairing (recommended)" },
-        { value: "allowlist", label: "Allowlist (specific users only)" },
-        { value: "open", label: "Open (public inbound DMs)" },
-        { value: "disabled", label: "Disabled (ignore DMs)" },
+        {
+          value: "pairing",
+          label: "Pairing (recommended)".replace("Pairing (recommended)", "配对（推荐）"),
+        },
+        {
+          value: "allowlist",
+          label: "Allowlist (specific users only)".replace(
+            "Allowlist (specific users only)",
+            "允许列表（仅限特定用户）",
+          ),
+        },
+        {
+          value: "open",
+          label: "Open (public inbound DMs)".replace(
+            "Open (public inbound DMs)",
+            "公开（公开入站私信）",
+          ),
+        },
+        {
+          value: "disabled",
+          label: "Disabled (ignore DMs)".replace("Disabled (ignore DMs)", "禁用（忽略私信）"),
+        },
       ],
     })) as DmPolicy;
   };
@@ -308,7 +359,10 @@ export async function setupChannels(
   const shouldConfigure = options?.skipConfirm
     ? true
     : await prompter.confirm({
-        message: "Configure chat channels now?",
+        message: "Configure chat channels now?".replace(
+          "Configure chat channels now?",
+          "现在配置聊天频道？",
+        ),
         initialValue: true,
       });
   if (!shouldConfigure) {
@@ -363,10 +417,10 @@ export async function setupChannels(
     const plugin = getChannelPlugin(channel);
     if (!plugin) {
       if (next.plugins?.entries?.[channel]?.enabled === false) {
-        return "plugin disabled";
+        return "插件已禁用";
       }
       if (next.plugins?.enabled === false) {
-        return "plugins disabled";
+        return "插件已禁用";
       }
       return undefined;
     }
@@ -383,7 +437,7 @@ export async function setupChannels(
     ) {
       enabled = (next.channels as Record<string, { enabled?: boolean }>)[channel]?.enabled;
     }
-    return enabled === false ? "disabled" : undefined;
+    return enabled === false ? "已禁用" : undefined;
   };
 
   const buildSelectionOptions = (
@@ -451,8 +505,11 @@ export async function setupChannels(
     next = result.config;
     if (!result.enabled) {
       await prompter.note(
-        `Cannot enable ${channel}: ${result.reason ?? "plugin disabled"}.`,
-        "Channel setup",
+        `Cannot enable ${channel}: ${result.reason ?? "插件已禁用"}.`.replace(
+          "Cannot enable",
+          "无法启用",
+        ),
+        "Channel setup".replace("Channel setup", "频道设置"),
       );
       return false;
     }
@@ -463,7 +520,10 @@ export async function setupChannels(
       workspaceDir,
     });
     if (!getChannelPlugin(channel)) {
-      await prompter.note(`${channel} plugin not available.`, "Channel setup");
+      await prompter.note(
+        `${channel} plugin not available.`.replace("plugin not available", "插件不可用"),
+        "Channel setup".replace("Channel setup", "频道设置"),
+      );
       return false;
     }
     await refreshStatus(channel);
@@ -473,7 +533,13 @@ export async function setupChannels(
   const configureChannel = async (channel: ChannelChoice) => {
     const adapter = getChannelOnboardingAdapter(channel);
     if (!adapter) {
-      await prompter.note(`${channel} does not support onboarding yet.`, "Channel setup");
+      await prompter.note(
+        `${channel} does not support onboarding yet.`.replace(
+          "does not support onboarding yet",
+          "尚不支持入职配置",
+        ),
+        "Channel setup".replace("Channel setup", "频道设置"),
+      );
       return;
     }
     const result = await adapter.configure({
@@ -519,7 +585,13 @@ export async function setupChannels(
     }
 
     if (action === "delete" && !supportsDelete) {
-      await prompter.note(`${label} does not support deleting config entries.`, "Remove channel");
+      await prompter.note(
+        `${label} does not support deleting config entries.`.replace(
+          "does not support deleting config entries",
+          "不支持删除配置条目",
+        ),
+        "Remove channel".replace("Remove channel", "移除频道"),
+      );
       return;
     }
 
@@ -542,7 +614,9 @@ export async function setupChannels(
 
     if (action === "delete") {
       const confirmed = await prompter.confirm({
-        message: `Delete ${label} account "${accountLabel}"?`,
+        message: `Delete ${label} account "${accountLabel}"?`
+          .replace("Delete", "删除")
+          .replace("account", "账号"),
         initialValue: false,
       });
       if (!confirmed) {
@@ -610,13 +684,19 @@ export async function setupChannels(
   if (options?.quickstartDefaults) {
     const { entries } = getChannelEntries();
     const choice = (await prompter.select({
-      message: "Select channel (QuickStart)",
+      message: "Select channel (QuickStart)".replace(
+        "Select channel (QuickStart)",
+        "选择频道（快速开始）",
+      ),
       options: [
         ...buildSelectionOptions(entries),
         {
           value: "__skip__",
-          label: "Skip for now",
-          hint: `You can add channels later via \`${formatCliCommand("openclaw channels add")}\``,
+          label: "Skip for now".replace("Skip for now", "跳过"),
+          hint: `You can add channels later via \`${formatCliCommand("openclaw channels add")}\``.replace(
+            "You can add channels later via",
+            "您可以稍后通过以下命令添加频道",
+          ),
         },
       ],
       initialValue: quickstartDefault,
@@ -630,13 +710,16 @@ export async function setupChannels(
     while (true) {
       const { entries } = getChannelEntries();
       const choice = (await prompter.select({
-        message: "Select a channel",
+        message: "Select a channel".replace("Select a channel", "选择一个频道"),
         options: [
           ...buildSelectionOptions(entries),
           {
             value: doneValue,
-            label: "Finished",
-            hint: selection.length > 0 ? "Done" : "Skip for now",
+            label: "Finished".replace("Finished", "完成"),
+            hint:
+              selection.length > 0
+                ? "Done".replace("Done", "完成")
+                : "Skip for now".replace("Skip for now", "跳过"),
           },
         ],
         initialValue,
@@ -659,7 +742,10 @@ export async function setupChannels(
     .map((channel) => selectionNotes.get(channel))
     .filter((line): line is string => Boolean(line));
   if (selectedLines.length > 0) {
-    await prompter.note(selectedLines.join("\n"), "Selected channels");
+    await prompter.note(
+      selectedLines.join("\n"),
+      "Selected channels".replace("Selected channels", "已选择的频道"),
+    );
   }
 
   if (!options?.skipDmPolicyPrompt) {
